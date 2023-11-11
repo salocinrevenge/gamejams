@@ -1,0 +1,10 @@
+I -> iceland
+F -> forest
+S -> savana
+P -> pampas
+R -> rock
+U -> universe
+M -> mars
+D -> Desert
+O -> Ocean
+B -> Beach
