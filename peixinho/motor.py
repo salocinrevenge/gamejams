@@ -15,7 +15,7 @@ class Coracao():
         self.WINDOW_WIDTH = dimensoes[0] * 0.7
         self.WINDOW_WIDTH = 800
         self.WINDOW_HEIGHT = dimensoes[1] * 0.7
-        self.WINDOW_HEIGHT = 800+50
+        self.WINDOW_HEIGHT = 800+100
         self.FPS_PADRAO = 60.0
         self.UPDATE_CAP = 1.0/self.FPS_PADRAO
         self.menu = Menu()
@@ -74,6 +74,8 @@ class Coracao():
     def tick(self): # metodo chamado a cada frame
         self.input()
         self.menu.tick()
+        # mostra a coordenada do mouse
+        # print(pygame.mouse.get_pos())
 
     def render(self, gc): # metodo chamado a cada frame
         # Limpar a telaa

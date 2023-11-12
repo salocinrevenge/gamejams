@@ -2,6 +2,8 @@ import pygame
 from parede import Parede
 from chao import Chao
 from entidade import Entidade
+import random
+from melanceira import Melanceira
 
 class Sala():
     def __init__(self, num, bioma, mundo) -> None:
@@ -23,6 +25,8 @@ class Sala():
         self.player = player
         self.mapaAtual[y][x] = player
 
+    probMela = {"I": 0, "U": 0,"S": 3,"P": 10,"F": 20,"R": 0,"M": 100,"D": 0 ,"O": 0,"B": 1}
+
     def carregarSala(self, arquivo):
         mapaOriginal = []
         mapaAtual = []
@@ -37,10 +41,15 @@ class Sala():
                         case '#':
                             objeto = Parede(self.bioma, x, y, self.escala)
                         case '.':
-                            objeto = Chao(self.bioma, x, y, self.escala)
+                            if random.randint(0, 10000) < self.probMela[self.bioma]:
+                                objeto = Melanceira(x, y, self, 30)
+                            else:
+                                objeto = Chao(self.bioma, x, y, self.escala)
                     mapaOriginal[-1].append(objeto)
                     mapaAtual[-1].append(objeto)
+        
         return mapaOriginal, mapaAtual
+
 
     def mover(self, objeto, x, y):
 

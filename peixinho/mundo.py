@@ -7,7 +7,8 @@ class Mundo():
     def __init__(self) -> None:
         self.mapaOriginal, self.mapaAtual = self.carregarSala("salas/mundo.txt")
         self.salas = self.criarSalas()
-        self.atual = (0,17) # i,j
+        self.atual = (9,9) # i,j
+        self.contadorObjetivo = 0
         self.mostrarMundo = False
         self.escala = 800//(len(self.mapaOriginal)*2)
         self.player = Ribopolho(self.atual[0], self.atual[1] ,self.salas[self.atual[0]][self.atual[1]])
@@ -42,6 +43,7 @@ class Mundo():
 
     def tick(self):
         self.salas[self.atual[0]][self.atual[1]].tick()
+        self.contadorObjetivo += 0.001
 
     cores = {"I": (230,230,255), "U": (30,0,40),"S": (180,150,0),"P": (100,235,100),"F": (0,50,0),"R": (150,150,150),"M": (150,0,0),"D": (255,255,0),"O": (0,0,100),"B": (255,255,0)}
 
@@ -49,6 +51,7 @@ class Mundo():
         # verifica se botao m foi pressionado
         if evento.type == pygame.KEYDOWN:
             if evento.key == pygame.K_m:
+                self.contadorObjetivo = 0
                 self.mostrarMundo = True
         if evento.type == pygame.KEYUP:
             if evento.key == pygame.K_m:
@@ -62,7 +65,9 @@ class Mundo():
                 pygame.draw.rect(screen, self.cores[bioma], pygame.Rect(coluna*self.escala+220, linha*self.escala+220, self.escala, self.escala))
         # desenha o player
         self.player.desenhaCabeca(screen, self.atual[1]*self.escala+220, self.atual[0]*self.escala+220, 10)
-
+        # desenha o objetivo como circulo vazio
+        if self.contadorObjetivo > 0.04:
+            pygame.draw.circle(screen, (255, 0, 0), (604, 231), 20, 5)
     def render(self, screen):
         # desenha a borda da sala
         self.salas[self.atual[0]][self.atual[1]].render(screen)
