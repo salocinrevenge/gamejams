@@ -9,7 +9,7 @@ from chao import Chao
 
 class Ribopolho(Entidade):
     # Repolho de perna de hipopotamo
-    def __init__(self, x, y, sala, vidaMaxima = 5000): # 10000 = 2m 45s, 5000 = 1m 22s
+    def __init__(self, x, y, sala, vidaMaxima = 2500): # 10000 = 2m 45s, 5000 = 1m 22s, 2500 = 41s
         self.x = x
         self.y = y
         self.vidaMaxima = vidaMaxima

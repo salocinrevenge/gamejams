@@ -3,7 +3,7 @@ from melancia import Melancia
 import pygame
 
 class Melanceira():
-    def __init__(self, x, y, sala, tempoColheita = 10): # 30 random tick speed
+    def __init__(self, x, y, sala, tempoColheita = 4): # 30 random tick speed
         self.x = x
         self.y = y
         self.sala = sala

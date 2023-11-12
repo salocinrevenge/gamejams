@@ -52,7 +52,7 @@ class Sala():
                             objeto = Parede(self.bioma, x, y, self.escala)
                         case '.':
                             if random.randint(0, 10000) < self.probMela[self.bioma]:
-                                objeto = Melanceira(x, y, self, 30)
+                                objeto = Melanceira(x, y, self)
                             else:
                                 objeto = Chao(self.bioma, x, y, self.escala)
                     mapaOriginal[-1].append(objeto)
