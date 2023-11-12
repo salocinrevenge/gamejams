@@ -15,13 +15,13 @@ class Coracao():
         self.WINDOW_WIDTH = dimensoes[0] * 0.7
         self.WINDOW_WIDTH = 800
         self.WINDOW_HEIGHT = dimensoes[1] * 0.7
-        self.WINDOW_HEIGHT = 800
+        self.WINDOW_HEIGHT = 800+50
         self.FPS_PADRAO = 60.0
         self.UPDATE_CAP = 1.0/self.FPS_PADRAO
         self.menu = Menu()
         # Criar a janela
         self.screen = pygame.display.set_mode((self.WINDOW_WIDTH, self.WINDOW_HEIGHT), pygame.RESIZABLE)
-        pygame.display.set_caption("Clock Evolves") # titulo da janela
+        pygame.display.set_caption("Ribopolho chega em Marte") # titulo da janela
         Thread(self.run())
 
 

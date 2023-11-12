@@ -13,7 +13,7 @@ class Chao():
     def clamp(self, n, minn, maxn):
         return max(min(maxn, n), minn)
     
-    cores = {"I": (230,230,255), "U": (30,0,40),"S": (180,150,0),"P": (80,235,100),"F": (0,50,0),"R": (150,150,150),"M": (150,0,0),"D": (255,255,0),"O": (0,0,100),"B": (255,255,0)}
+    cores = {"I": (230,230,255), "U": (10,0,16),"S": (180,150,0),"P": (60,180,80),"F": (0,50,0),"R": (150,150,150),"M": (150,0,0),"D": (210,210,0),"O": (0,0,100),"B": (255,255,0)}
 
     def render(self, screen):
         pygame.draw.rect(screen, self.cor, pygame.Rect(self.x*self.escala, self.y*self.escala, self.escala, self.escala))

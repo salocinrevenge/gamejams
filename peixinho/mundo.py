@@ -7,7 +7,7 @@ class Mundo():
     def __init__(self) -> None:
         self.mapaOriginal, self.mapaAtual = self.carregarSala("salas/mundo.txt")
         self.salas = self.criarSalas()
-        self.atual = (9,9) # i,j
+        self.atual = (0,17) # i,j
         self.mostrarMundo = False
         self.escala = 800//(len(self.mapaOriginal)*2)
         self.player = Ribopolho(self.atual[0], self.atual[1] ,self.salas[self.atual[0]][self.atual[1]])
