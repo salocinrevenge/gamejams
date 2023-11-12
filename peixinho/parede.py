@@ -50,6 +50,9 @@ class Parede():
     
     cores = {"I": (230,230,255), "U": (8,0,16),"S": (180,150,0),"P": (60,180,80),"F": (0,50,0),"R": (150,150,150),"M": (150,0,0),"D": (210,210,0),"O": (0,0,100),"B": (255,255,0)}
 
+    def tick(self):
+        pass
+
     def render(self, screen):
         escurecer = 0.9
         match self.bioma:

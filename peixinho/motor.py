@@ -2,7 +2,7 @@ import pygame
 from threading import Thread
 import time
 from menu import Menu
-
+from excessoes.Win import Win
 
 class Coracao():
 
@@ -54,7 +54,13 @@ class Coracao():
                     unprocessedTime -= self.UPDATE_CAP  # Tempo comido
                     render = True
 
-                    self.tick()
+                    try:
+                        self.tick()
+                    except Win as e:
+                        print(e.message)
+                        self.running = False
+                        self.dispose()
+                        return
 
                     if frameTime >= 1.0:
                             frameTime = 0

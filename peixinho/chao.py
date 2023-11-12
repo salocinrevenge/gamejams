@@ -17,3 +17,6 @@ class Chao():
 
     def render(self, screen):
         pygame.draw.rect(screen, self.cor, pygame.Rect(self.x*self.escala, self.y*self.escala, self.escala, self.escala))
+
+    def tick(self):
+        pass

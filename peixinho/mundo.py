@@ -2,6 +2,9 @@ import pygame
 from sala import Sala
 import random
 from ribopolho import Ribopolho
+from excessoes.Die import Die
+from foguete import Foguete
+from chao import Chao
 
 class Mundo():
     def __init__(self) -> None:
@@ -11,8 +14,11 @@ class Mundo():
         self.contadorObjetivo = 0
         self.mostrarMundo = False
         self.escala = 800//(len(self.mapaOriginal)*2)
-        self.player = Ribopolho(self.atual[0], self.atual[1] ,self.salas[self.atual[0]][self.atual[1]])
+        self.player = Ribopolho(9, 9 ,self.salas[self.atual[0]][self.atual[1]])
         self.salas[self.atual[0]][self.atual[1]].setplayer(self.player)
+
+        self.salas[17][0].mapaOriginal[9][9] = Foguete(9, 9, self.salas[17][0])
+        self.salas[17][0].mapaAtual[9][9] = self.salas[17][0].mapaOriginal[9][9]
 
     def criarSalas(self):
         salas = []
@@ -23,12 +29,33 @@ class Mundo():
                 # salas[-1].append(Sala(0, self.mapaOriginal[i][j], self)) # sorteia de 0 a 9
         return salas
 
+    def decolar(self):
+        foguete = self.salas[self.atual[0]][self.atual[1]].mapaOriginal[self.player.y][self.player.x]
+        self.salas[self.atual[0]][self.atual[1]].mapaOriginal[self.player.y][self.player.x] = Chao(self.player.sala.bioma, self.player.x, self.player.y, self.player.sala.escala)
+        self.player.sala.removePlayer()
+        self.player.foguete = foguete
+        i = self.atual[0]
+        salaAlvo = self.salas[i][self.atual[1]]
+        while salaAlvo.bioma != "U":
+            i-=1
+            salaAlvo = self.salas[i][self.atual[1]]
+        self.atual = (i, self.atual[1])
+        self.salas[self.atual[0]][self.atual[1]].setplayer(self.player)
+        self.player.sala = self.salas[self.atual[0]][self.atual[1]]
+
+
     def mover(self, dx, dy):
         if self.atual[1]+dx < 0 or self.atual[0]+dy < 0 or self.atual[1]+dx >= len(self.salas) or self.atual[0]+dy >= len(self.salas[0]):
+            return False
+        if self.salas[self.atual[0]+dy][self.atual[1]+dx].bioma == "U" and self.salas[self.atual[0]][self.atual[1]].bioma != "U":
             return False
         self.atual = (self.atual[0]+dy, self.atual[1]+dx)
         self.salas[self.atual[0]][self.atual[1]].setplayer(self.player)
         self.player.sala = self.salas[self.atual[0]][self.atual[1]]
+        if self.player.sala.bioma == "M":
+            self.player.sala.mapaOriginal[self.player.y][self.player.x] = self.player.foguete
+            self.player.foguete.atualizarPosicao(self.player.x, self.player.y, self.player.sala)
+            self.player.foguete = None
         return True
 
     def carregarSala(self, arquivo):
@@ -42,7 +69,13 @@ class Mundo():
         return mapaOriginal, mapaAtual
 
     def tick(self):
-        self.salas[self.atual[0]][self.atual[1]].tick()
+        try:
+            self.salas[self.atual[0]][self.atual[1]].tick()
+        except Die:
+            self.salas[self.atual[0]][self.atual[1]].removePlayer()
+            self.atual = (9,9)
+            self.player = Ribopolho(9, 9 ,self.salas[self.atual[0]][self.atual[1]])
+            self.salas[self.atual[0]][self.atual[1]].setplayer(self.player)
         self.contadorObjetivo += 0.001
 
     cores = {"I": (230,230,255), "U": (30,0,40),"S": (180,150,0),"P": (100,235,100),"F": (0,50,0),"R": (150,150,150),"M": (150,0,0),"D": (255,255,0),"O": (0,0,100),"B": (255,255,0)}

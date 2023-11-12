@@ -4,6 +4,9 @@ from chao import Chao
 from entidade import Entidade
 import random
 from melanceira import Melanceira
+from ribopolho import Ribopolho
+from excessoes.Win import Win
+from foguete import Foguete
 
 class Sala():
     def __init__(self, num, bioma, mundo) -> None:
@@ -20,12 +23,19 @@ class Sala():
             tamanho = len(lines)
         return 800//(tamanho)
     
+    def removePlayer(self):
+        self.mapaAtual[self.player.y][self.player.x] = self.mapaOriginal[self.player.y][self.player.x]
+        self.player = None
+
+    
     def setplayer(self, player):
         x, y = player.x, player.y
         self.player = player
         self.mapaAtual[y][x] = player
 
-    probMela = {"I": 0, "U": 0,"S": 3,"P": 10,"F": 20,"R": 0,"M": 100,"D": 0 ,"O": 0,"B": 1}
+    probMela = {"I": 0, "U": 0,"S": 3,"P": 10,"F": 20,"R": 0,"M": 0,"D": 0 ,"O": 0,"B": 1}
+
+    cores = {"I": (230,230,254), "U": (10,1,16),"S": (180,150,1),"P": (60,180,80),"F": (1,50,1),"R": (150,150,150),"M": (150,1,1),"D": (210,210,1),"O": (1,1,100),"B": (254,254,0)}
 
     def carregarSala(self, arquivo):
         mapaOriginal = []
@@ -70,25 +80,46 @@ class Sala():
             x, y = objeto.x, objeto.y
             objeto.x = novoX
             objeto.y = novoY
+            
             if self.mundo.mover(*mover):
                 self.mapaAtual[y][x] = self.mapaOriginal[y][x]
+                return
             else:
                 objeto.x , objeto.y = x, y
             return
 
-        if type(self.mapaAtual[y][x]) == Chao:
+        if type(self.mapaAtual[y][x]) in {Chao, Melanceira, Foguete}:
             self.mapaAtual[objeto.y][objeto.x] = self.mapaOriginal[objeto.y][objeto.x]
             self.mapaAtual[y][x] = objeto
             objeto.x = x
             objeto.y = y
 
+    def colocar(self, x, y, objeto):
+        if isinstance(self.mapaOriginal[y][x], Chao):
+            self.mapaOriginal[y][x] = objeto
+            objeto.atualizarPosicao(x, y, self)
+            return True
+        return False
+
     def tick(self):
         if self.player:
             self.player.tick()
+        # random tick
+        i,j = random.randint(0, len(self.mapaAtual)-1), random.randint(0, len(self.mapaAtual[0])-1)
+        self.mapaAtual[i][j].tick()
 
     def input(self, evento):
         if self.player:
             self.player.input(evento)
+
+    def plantar(self, x, y):
+        if isinstance(self.mapaAtual[y][x], Ribopolho):
+            if isinstance(self.mapaOriginal[y][x], Chao) and self.mapaOriginal[y][x].bioma in {"S", "P", "F", "M"}:
+                self.mapaOriginal[y][x] = Melanceira(x, y, self, 30)
+                if self.bioma == "M":
+                    raise Win("EBA! Marte eh habitavel!")
+                return True
+        return False
 
     def render(self, screen):
         # desenha a borda da sala
