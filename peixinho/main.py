@@ -1,3 +1,5 @@
 from motor import Coracao
+import asyncio
 
-Coracao()
+game = Coracao()
+asyncio.run(game.run())

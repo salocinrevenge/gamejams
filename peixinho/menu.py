@@ -6,7 +6,7 @@ class Menu():
     def __init__(self) -> None:
         self.criaBotoesMenuPrincipal()
         self.criaBotoesMenuCriar()
-        self.STATE = "Menu"
+        self.STATE:str = "Menu"
         self.mundo = None
 
 
@@ -18,11 +18,14 @@ class Menu():
         if self.STATE == "Menu":
             for botao in self.botoesMenuPrincipal:
                 botao.render(screen)
-        if self.STATE == "Criar Sala":
+            return
+        elif self.STATE == "Criar Sala":
             for botao in self.botoesMenuCriar:
                 botao.render(screen)
-        if self.STATE == "Mundo":
+            return
+        elif self.STATE == "Mundo":
             self.mundo.render(screen)
+            return
         
     def criarMundo(self):
         self.mundo = Mundo()

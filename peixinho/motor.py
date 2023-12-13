@@ -1,13 +1,12 @@
 import pygame
-from threading import Thread
 import time
+import asyncio
 from menu import Menu
 from excessoes.Win import Win
 
 class Coracao():
 
     def __init__(self) -> None:
-        Thread.__init__(self)
         pygame.init()
 
         # Definir as dimensões da janela
@@ -22,10 +21,10 @@ class Coracao():
         # Criar a janela
         self.screen = pygame.display.set_mode((self.WINDOW_WIDTH, self.WINDOW_HEIGHT), pygame.RESIZABLE)
         pygame.display.set_caption("Ribopolho chega em Marte") # titulo da janela
-        Thread(self.run())
+        
 
 
-    def run(self):
+    async def run(self):
         self.running = True
         render = False
         firstTime = 0
@@ -74,6 +73,7 @@ class Coracao():
                     frames += 1
                 else:
                     time.sleep(0.001)
+                await asyncio.sleep(0)
                 
         self.dispose()
       
@@ -91,7 +91,7 @@ class Coracao():
         self.menu.render(self.screen)
 
         # Atualizar a tela
-        pygame.display.update()
+        pygame.display.flip()
 
     def input(self):
         # Verificar eventos
