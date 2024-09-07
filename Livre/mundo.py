@@ -2,6 +2,7 @@ import pygame
 from sala import Sala
 import random
 from camera import Camera
+from programador import Programador
 
 class Mundo():
     def __init__(self) -> None:
@@ -9,6 +10,8 @@ class Mundo():
         self.salas = self.criarSalas()
         self.salaAtual = self.salas[0][0]
         self.camera = Camera(self, (250,250))
+        self.programador = Programador(0,0, self)
+        self.salaAtual.adicionarPersonagem(self.programador, self.salaAtual.centro())
 
     def tick(self):
         self.camera.tick()

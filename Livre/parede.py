@@ -1,7 +1,7 @@
 import pygame
 import random
 
-class Chao():
+class Parede():
     def __init__(self, bioma, x, y) -> None:
         self.bioma = bioma
         self.x = x
@@ -11,7 +11,7 @@ class Chao():
     
     def getImage(self):
         if self.bioma == "O":
-            return pygame.image.load(f"assets/water.png")
+            return pygame.image.load(f"assets/borda.png")
         return pygame.image.load(f"assets/borda.png")
 
     def clamp(self, n, minn, maxn):
@@ -19,7 +19,7 @@ class Chao():
 
     def render(self, screen, camera):
         # mostra a imagem
-        camera.render(screen, self.imagem, (self.x+1, self.y+1))
+        camera.render(screen, self.imagem, (self.x, self.y))
 
     def tick(self):
         pass

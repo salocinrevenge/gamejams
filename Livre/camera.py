@@ -1,4 +1,5 @@
 from algelin import toIsometric
+
 class Camera():
     def __init__(self, mundo, pos) -> None:
         self.mundo = mundo
