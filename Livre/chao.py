@@ -6,7 +6,7 @@ class Chao():
         self.bioma = bioma
         self.x = x
         self.y = y
-        self.imagem = pygame.image.load(f"assets/tile.png")
+        self.imagem = pygame.image.load(f"assets/borda.png")
 
     def clamp(self, n, minn, maxn):
         return max(min(maxn, n), minn)

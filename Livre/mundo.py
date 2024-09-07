@@ -8,7 +8,7 @@ class Mundo():
         self.mapaOriginal, self.mapaAtual = self.carregarSala("salas/mundo.txt")
         self.salas = self.criarSalas()
         self.salaAtual = self.salas[0][0]
-        self.camera = Camera(self)
+        self.camera = Camera(self, (250,250))
 
     def tick(self):
         self.camera.tick()
