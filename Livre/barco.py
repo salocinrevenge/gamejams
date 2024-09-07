@@ -1,7 +1,7 @@
 import pygame
 import random
 
-class Parede():
+class Barco():
     def __init__(self, bioma, x, y) -> None:
         self.bioma = bioma
         self.x = x
@@ -10,13 +10,7 @@ class Parede():
         self.imagem = self.getImage()
     
     def getImage(self):
-        if self.bioma == "O":
-            return pygame.image.load(f"assets/parede.png")
-        if self.bioma == "D":
-            return pygame.image.load(f"assets/desert.png")
-        if self.bioma == "A":
-            return pygame.image.load(f"assets/ice.png")
-        return pygame.image.load(f"assets/parede.png")
+        return pygame.image.load(f"assets/barco.png")
 
     def clamp(self, n, minn, maxn):
         return max(min(maxn, n), minn)
@@ -24,5 +18,16 @@ class Parede():
     def render(self, screen, camera, deslocamento):
         camera.render(screen, self.imagem, (self.x+deslocamento[0], self.y+deslocamento[1]))
 
+    def setNavegante(self, navegante):
+        self.navegante = navegante
+        navegante.setBarco(self)
+
     def tick(self):
         pass
+    
+    def input(self, evento):
+        pass
+    
+    def setPos(self, x, y):
+        self.x = x
+        self.y = y

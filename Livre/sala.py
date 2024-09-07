@@ -4,6 +4,7 @@ from excessoes.Win import Win
 from chao import Chao
 from parede import Parede
 from algelin import norm
+from barco import Barco
 
 class Sala():
     def __init__(self, num, bioma, mundo, pos) -> None:
@@ -23,11 +24,16 @@ class Sala():
             entidades.append([])
             for x, objeto in enumerate(linha):
                 entidades[-1].append([])
+                if self.posBonus is not None and (x,y) == self.posBonus[1]:
+                    if self.posBonus[0] == 'B':
+                        entidades[-1][-1].append(Barco(self.bioma, x, y))
         return entidades
 
     def carregarSala(self, arquivo):
         mapaOriginal = []
         mapaAtual = []
+        
+        self.posBonus = []
         with open(arquivo, "r") as arquivo:
             for y, linha in enumerate(arquivo):
                 linha = linha.strip()
@@ -38,11 +44,19 @@ class Sala():
                     match letra:
                         case '.':
                             objeto.append(Chao(self.bioma, x, y))
+                        case 'B':
+                            objeto.append(Chao(self.bioma, x, y))
+                            if self.bioma != self.bioma.lower():
+                                self.posBonus.append(('B',(x,y)))
                         case '#':
                             objeto.append(Chao(self.bioma, x, y))
                             objeto.append(Parede(self.bioma, x, y))
                     mapaOriginal[-1].append(objeto)
                     mapaAtual[-1].append(objeto)
+        if len(self.posBonus) > 0:
+            self.posBonus = random.choice(self.posBonus)
+        else:
+            self.posBonus = None
         
         return mapaOriginal, mapaAtual
 
@@ -87,6 +101,10 @@ class Sala():
         if dentro:
             bloqueado = False
             for o in self.entidades[y][x]:
+                if isinstance(o, Barco):
+                    o.setNavegante(objeto)
+                    self.entidades[y][x].remove(o)
+                    continue
                 bloqueado = True
                 
             for o in self.mapaAtual[y][x]:

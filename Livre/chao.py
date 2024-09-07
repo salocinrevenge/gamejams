@@ -10,11 +10,12 @@ class Chao():
         self.imagem = self.getImage()
     
     def getImage(self):
-        if self.bioma == "O":
+        self.bioma = self.bioma.lower()
+        if self.bioma == "o":
             return pygame.image.load(f"assets/water.png")
-        if self.bioma == "D":
+        if self.bioma == "d":
             return pygame.image.load(f"assets/desert.png")
-        if self.bioma == "A":
+        if self.bioma == "a":
             return pygame.image.load(f"assets/ice.png")
         return pygame.image.load(f"assets/borda.png")
 
@@ -22,7 +23,6 @@ class Chao():
         return max(min(maxn, n), minn)
 
     def render(self, screen, camera, deslocamento):
-        # mostra a imagem
         camera.render(screen, self.imagem, (self.x+deslocamento[0]+1, self.y+deslocamento[1]+1))
 
     def tick(self):
