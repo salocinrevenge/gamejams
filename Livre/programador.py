@@ -5,7 +5,7 @@ from personagem import Personagem
 class Programador(Personagem):
     def __init__(self, x, y, mundo) -> None:
         super().__init__(x, y, mundo)
-        self.imagem = pygame.image.load("assets/borda.png")
+        self.imagem = pygame.image.load("assets/programador.png")
 
     def tick(self):
         pass
