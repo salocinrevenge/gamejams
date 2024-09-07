@@ -17,9 +17,9 @@ class Parede():
     def clamp(self, n, minn, maxn):
         return max(min(maxn, n), minn)
 
-    def render(self, screen, camera):
+    def render(self, screen, camera, deslocamento):
         # mostra a imagem
-        camera.render(screen, self.imagem, (self.x, self.y))
+        camera.render(screen, self.imagem, (self.x+deslocamento[0], self.y+deslocamento[1]))
 
     def tick(self):
         pass

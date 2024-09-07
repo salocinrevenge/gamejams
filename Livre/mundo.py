@@ -18,10 +18,16 @@ class Mundo():
         self.salaAtual.tick()
         
     def input(self, evento):
-        self.salaAtual.input(evento)
+        posCentral = self.salaAtual.getPos()
+        for i in range(-1,2):
+            for j in range(-1,2):
+                self.salas[i+posCentral[0]][j+posCentral[1]].input(evento)
     
     def render(self, screen):
-        self.salaAtual.render(screen, self.camera)
+        posCentral = self.salaAtual.getPos()
+        for i in range(-1,2):
+            for j in range(-1,2):
+                self.salas[i+posCentral[0]][j+posCentral[1]].render(screen, self.camera)
     
     
     def criarSalas(self):
@@ -29,7 +35,7 @@ class Mundo():
         for i in range(len(self.mapaAtual)):
             salas.append([])
             for j in range(len(self.mapaAtual[i])):
-                salas[-1].append(Sala(random.randint(0,0), self.mapaOriginal[i][j], self)) # sorteia de 0 a 9
+                salas[-1].append(Sala(random.randint(0,0), self.mapaOriginal[i][j], self, (i,j))) # sorteia de 0 a 9
         return salas
 
     def carregarSala(self, arquivo):
@@ -41,5 +47,10 @@ class Mundo():
                 mapaOriginal.append(list(linha))
                 mapaAtual.append(list(linha))
         return mapaOriginal, mapaAtual
-        
+    
+    def mover(self, personagem, posSalaAlvo, x, y):
+        if posSalaAlvo[0] < 0 or posSalaAlvo[0] >= len(self.salas) or posSalaAlvo[1] < 0 or posSalaAlvo[1] >= len(self.salas[0]):
+            return False
+        if self.salas[posSalaAlvo[0]][posSalaAlvo[1]].mover(personagem, None, None, x, y):
+            return True
             
