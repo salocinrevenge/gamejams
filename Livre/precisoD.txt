@@ -1,0 +1,27 @@
+textura agua
+textura personagem
+textura barco
+textura windows (inimigo)
+textura bau
+textura deserto
+textura jungle
+textura antartida
+textura pinguim
+textura arvore jungle
+textura cacto
+textura softwares
+textura gamuto
+
+som bau
+som agua
+som andar
+
+animacao agua
+animacao personagem
+animacao bau
+animacao windows
+
+outras animacoes
+outros sons
+
+musica de fundo

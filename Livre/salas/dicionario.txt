@@ -1,0 +1,5 @@
+mundo:
+O: oceano
+D: deserto
+J: jungle
+A: antartida
