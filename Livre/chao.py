@@ -11,10 +11,9 @@ class Chao():
     def clamp(self, n, minn, maxn):
         return max(min(maxn, n), minn)
 
-    def render(self, screen):
+    def render(self, screen, camera):
         # mostra a imagem
-        screen.blit(self.imagem, (self.x, self.y))
-        print(self.x, self.y)
+        camera.render(screen, self.imagem, (self.x, self.y))
 
     def tick(self):
         pass

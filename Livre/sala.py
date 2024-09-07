@@ -9,7 +9,6 @@ class Sala():
         self.bioma = bioma
         self.mapaOriginal, self.mapaAtual = self.carregarSala(path)
         self.mundo = mundo
-    
 
     def carregarSala(self, arquivo):
         mapaOriginal = []
@@ -20,10 +19,10 @@ class Sala():
                 mapaOriginal.append([])
                 mapaAtual.append([])
                 for x, letra in enumerate(linha):
-                    objeto = None
+                    objeto = []
                     match letra:
                         case '.':
-                            objeto = Chao(self.bioma, x, y)
+                            objeto.append(Chao(self.bioma, x, y))
                             pass
                     mapaOriginal[-1].append(objeto)
                     mapaAtual[-1].append(objeto)
@@ -37,5 +36,8 @@ class Sala():
     def input(self, evento):
         pass
 
-    def render(self, screen):
-        pass
+    def render(self, screen, camera):
+        for y, linha in enumerate(self.mapaAtual):
+            for x, objeto in enumerate(linha):
+                for o in objeto:
+                    o.render(screen,camera)

@@ -1,19 +1,24 @@
 import pygame
 from sala import Sala
 import random
+from camera import Camera
 
 class Mundo():
     def __init__(self) -> None:
         self.mapaOriginal, self.mapaAtual = self.carregarSala("salas/mundo.txt")
         self.salas = self.criarSalas()
+        self.salaAtual = self.salas[0][0]
+        self.camera = Camera(self)
 
     def tick(self):
-        pass
+        self.camera.tick()
+        self.salaAtual.tick()
+        
     def input(self, evento):
-        pass
+        self.salaAtual.input(evento)
     
     def render(self, screen):
-        pass
+        self.salaAtual.render(screen, self.camera)
     
     
     def criarSalas(self):
