@@ -13,7 +13,6 @@ class Camera():
     def tick(self):
         if self.target:
             deslSala = self.target.mundo.salaAtual.deslocamentoSala()
-            print(deslSala)
             
             self.x,self.y = toIsometric(-((deslSala[0]+self.target.x)*32), -((deslSala[1]+self.target.y)*32))
             self.x += 350

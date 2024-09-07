@@ -12,6 +12,10 @@ class Parede():
     def getImage(self):
         if self.bioma == "O":
             return pygame.image.load(f"assets/parede.png")
+        if self.bioma == "D":
+            return pygame.image.load(f"assets/desert.png")
+        if self.bioma == "A":
+            return pygame.image.load(f"assets/ice.png")
         return pygame.image.load(f"assets/parede.png")
 
     def clamp(self, n, minn, maxn):

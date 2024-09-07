@@ -16,6 +16,5 @@ class Personagem:
         pass
     
     def setPos(self, x, y):
-        print("setando posicao para ", x, y)
         self.x = x
         self.y = y

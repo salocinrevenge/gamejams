@@ -13,6 +13,7 @@ class Mundo():
         self.programador = Programador(self.salaAtual.pos[0],self.salaAtual.pos[1], self)
         self.camera.setTarget(self.programador)
         self.salaAtual.adicionarPersonagem(self.programador, self.salaAtual.centro())
+        self.renderDistance = 2
 
     def centro(self):
         return (len(self.salas)//2, len(self.salas[0])//2)
@@ -20,20 +21,26 @@ class Mundo():
     def tick(self):
         self.camera.tick()
         posCentral = self.salaAtual.getPos()
-        for i in range(-1,2):
-            for j in range(-1,2):
+        for i in range(-self.renderDistance,self.renderDistance+1):
+            for j in range(-self.renderDistance,self.renderDistance+1):
+                if i+posCentral[0] < 0 or i+posCentral[0] >= len(self.salas) or j+posCentral[1] < 0 or j+posCentral[1] >= len(self.salas[0]):
+                    continue
                 self.salas[i+posCentral[0]][j+posCentral[1]].tick()
         
     def input(self, evento):
         posCentral = self.salaAtual.getPos()
-        for i in range(-1,2):
-            for j in range(-1,2):
+        for i in range(-self.renderDistance,self.renderDistance+1):
+            for j in range(-self.renderDistance,self.renderDistance+1):
+                if i+posCentral[0] < 0 or i+posCentral[0] >= len(self.salas) or j+posCentral[1] < 0 or j+posCentral[1] >= len(self.salas[0]):
+                    continue
                 self.salas[i+posCentral[0]][j+posCentral[1]].input(evento)
     
     def render(self, screen):
         posCentral = self.salaAtual.getPos()
-        for i in range(-1,2):
-            for j in range(-1,2):
+        for i in range(-self.renderDistance,self.renderDistance+1):
+            for j in range(-self.renderDistance,self.renderDistance+1):
+                if i+posCentral[0] < 0 or i+posCentral[0] >= len(self.salas) or j+posCentral[1] < 0 or j+posCentral[1] >= len(self.salas[0]):
+                    continue
                 self.salas[i+posCentral[0]][j+posCentral[1]].render(screen, self.camera)
     
     
@@ -53,6 +60,11 @@ class Mundo():
                 linha = linha.strip()
                 mapaOriginal.append(list(linha))
                 mapaAtual.append(list(linha))
+                
+        # transpoe o mapa
+        mapaOriginal = [list(x) for x in zip(*mapaOriginal)]
+        mapaAtual = [list(x) for x in zip(*mapaAtual)]
+        
         return mapaOriginal, mapaAtual
     
     def mover(self, personagem, posSalaAlvo, x, y):
