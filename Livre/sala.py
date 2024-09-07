@@ -64,10 +64,8 @@ class Sala():
             for x, objeto in enumerate(linha):
                 for o in objeto:
                     o.render(screen,camera, self.deslocamentoSala())
-        for y, linha in enumerate(self.entidades):
-            for x, objeto in enumerate(linha):
-                for o in objeto:
-                    o.render(screen, camera, self.deslocamentoSala())
+                for e in self.entidades[y][x]:
+                    e.render(screen, camera, self.deslocamentoSala())    
                     
     def deslocamentoSala(self):
         return self.pos[0] * len(self.mapaAtual[0]), self.pos[1] * len(self.mapaAtual)
@@ -80,15 +78,12 @@ class Sala():
         return len(self.mapaAtual[0])//2, len(self.mapaAtual)//2
     
     def mover(self, objeto, x0, y0, x, y):
-        print("mover sala, recebi", x0, y0, x, y)
         dentro = True
-        print(x, y)
         if x < 0 or x >= len(self.mapaAtual[0]):
             dentro = False
         if y < 0 or y >= len(self.mapaAtual):
             dentro = False
             
-        print(dentro)
         if dentro:
             bloqueado = False
             for o in self.entidades[y][x]:
@@ -98,15 +93,10 @@ class Sala():
                 if isinstance(o, Parede):
                     bloqueado = True
             
-            print(f"{bloqueado=}")
             if bloqueado:
                 return False
-            
-            if x0 and y0:
-                print(f"{x0=}, {y0=}, ",end="")
-                print(f"removendo {objeto} de {self.entidades[y0][x0]}")
+            if x0 is not None and y0 is not None:
                 self.entidades[y0][x0].remove(objeto)
-            print(f"Agora esta assim: {self.entidades[y][x]}")
             self.entidades[y][x].append(objeto)
             
             objeto.setPos(x, y)
@@ -123,12 +113,8 @@ class Sala():
                 posSalaAlvo[1] = 1
             posSalaAlvo[0] += self.pos[0]
             posSalaAlvo[1] += self.pos[1]
-            print(posSalaAlvo)
-            print("vou perguntar pro mundo e ja venho")
             if self.mundo.mover(objeto, posSalaAlvo, x%len(self.mapaAtual[0]), y%len(self.mapaAtual)):
-                print("consegui mover de sala (sala)")
-                print(f"Removendo {x0=}, {y0=}, ",end="")
-                if x0 and y0:
+                if x0 is not None and y0 is not None:
                     self.entidades[y0][x0].remove(objeto)
                 return True
             

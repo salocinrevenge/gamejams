@@ -8,10 +8,14 @@ class Mundo():
     def __init__(self) -> None:
         self.mapaOriginal, self.mapaAtual = self.carregarSala("salas/mundo.txt")
         self.salas = self.criarSalas()
-        self.salaAtual = self.salas[0][0]
+        self.salaAtual = self.salas[self.centro()[0]][self.centro()[1]]
         self.camera = Camera(self, (250,250))
-        self.programador = Programador(0,0, self)
+        self.programador = Programador(self.salaAtual.pos[0],self.salaAtual.pos[1], self)
+        self.camera.setTarget(self.programador)
         self.salaAtual.adicionarPersonagem(self.programador, self.salaAtual.centro())
+
+    def centro(self):
+        return (len(self.salas)//2, len(self.salas[0])//2)
 
     def tick(self):
         self.camera.tick()
@@ -52,14 +56,10 @@ class Mundo():
         return mapaOriginal, mapaAtual
     
     def mover(self, personagem, posSalaAlvo, x, y):
-        print("mundo modever")
         if posSalaAlvo[0] < 0 or posSalaAlvo[0] >= len(self.salas) or posSalaAlvo[1] < 0 or posSalaAlvo[1] >= len(self.salas[0]):
             return False
         if self.salas[posSalaAlvo[0]][posSalaAlvo[1]].mover(personagem, None, None, x, y):
-            print("sala atual vai mudar")
             self.salaAtual = self.salas[posSalaAlvo[0]][posSalaAlvo[1]]
-            print("consegui mover de sala (mundo)")
             return True
-        print("Naoooo consegui mover de sala (mundo)")
         return False
             
