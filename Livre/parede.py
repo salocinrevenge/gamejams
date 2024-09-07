@@ -11,8 +11,8 @@ class Parede():
     
     def getImage(self):
         if self.bioma == "O":
-            return pygame.image.load(f"assets/borda.png")
-        return pygame.image.load(f"assets/borda.png")
+            return pygame.image.load(f"assets/parede.png")
+        return pygame.image.load(f"assets/parede.png")
 
     def clamp(self, n, minn, maxn):
         return max(min(maxn, n), minn)

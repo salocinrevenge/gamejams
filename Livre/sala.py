@@ -80,6 +80,7 @@ class Sala():
         return len(self.mapaAtual[0])//2, len(self.mapaAtual)//2
     
     def mover(self, objeto, x0, y0, x, y):
+        print("mover sala, recebi", x0, y0, x, y)
         dentro = True
         print(x, y)
         if x < 0 or x >= len(self.mapaAtual[0]):
@@ -99,19 +100,36 @@ class Sala():
             
             print(f"{bloqueado=}")
             if bloqueado:
-                return
+                return False
             
             if x0 and y0:
-                print(f"{x0=}, {y0=}, removendo {objeto} de {self.entidades[y0][x0]}")
+                print(f"{x0=}, {y0=}, ",end="")
+                print(f"removendo {objeto} de {self.entidades[y0][x0]}")
                 self.entidades[y0][x0].remove(objeto)
             print(f"Agora esta assim: {self.entidades[y][x]}")
             self.entidades[y][x].append(objeto)
             
             objeto.setPos(x, y)
-            return
+            return True
         else:
-            posSalaAlvo = (int(self.pos[0]+norm(y)), int(self.pos[1]+norm(x)))
+            posSalaAlvo = [0,0]
+            if x < 0:
+                posSalaAlvo[0] = -1
+            if x >= len(self.mapaAtual[0]):
+                posSalaAlvo[0] = 1
+            if y < 0:
+                posSalaAlvo[1] = -1
+            if y >= len(self.mapaAtual):
+                posSalaAlvo[1] = 1
+            posSalaAlvo[0] += self.pos[0]
+            posSalaAlvo[1] += self.pos[1]
             print(posSalaAlvo)
+            print("vou perguntar pro mundo e ja venho")
             if self.mundo.mover(objeto, posSalaAlvo, x%len(self.mapaAtual[0]), y%len(self.mapaAtual)):
+                print("consegui mover de sala (sala)")
+                print(f"Removendo {x0=}, {y0=}, ",end="")
                 if x0 and y0:
                     self.entidades[y0][x0].remove(objeto)
+                return True
+            
+        return False

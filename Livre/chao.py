@@ -21,7 +21,7 @@ class Chao():
 
     def render(self, screen, camera, deslocamento):
         # mostra a imagem
-        camera.render(screen, self.imagem, (self.x+deslocamento[0], self.y+deslocamento[1]))
+        camera.render(screen, self.imagem, (self.x+deslocamento[0]+1, self.y+deslocamento[1]+1))
 
     def tick(self):
         pass

@@ -15,7 +15,10 @@ class Mundo():
 
     def tick(self):
         self.camera.tick()
-        self.salaAtual.tick()
+        posCentral = self.salaAtual.getPos()
+        for i in range(-1,2):
+            for j in range(-1,2):
+                self.salas[i+posCentral[0]][j+posCentral[1]].tick()
         
     def input(self, evento):
         posCentral = self.salaAtual.getPos()
@@ -49,8 +52,14 @@ class Mundo():
         return mapaOriginal, mapaAtual
     
     def mover(self, personagem, posSalaAlvo, x, y):
+        print("mundo modever")
         if posSalaAlvo[0] < 0 or posSalaAlvo[0] >= len(self.salas) or posSalaAlvo[1] < 0 or posSalaAlvo[1] >= len(self.salas[0]):
             return False
         if self.salas[posSalaAlvo[0]][posSalaAlvo[1]].mover(personagem, None, None, x, y):
+            print("sala atual vai mudar")
+            self.salaAtual = self.salas[posSalaAlvo[0]][posSalaAlvo[1]]
+            print("consegui mover de sala (mundo)")
             return True
+        print("Naoooo consegui mover de sala (mundo)")
+        return False
             
