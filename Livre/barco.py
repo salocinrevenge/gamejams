@@ -2,15 +2,12 @@ import pygame
 import random
 
 class Barco():
+    
+    imagem = pygame.image.load("assets/barco.png")
     def __init__(self, bioma, x, y) -> None:
         self.bioma = bioma
         self.x = x
         self.y = y
-        
-        self.imagem = self.getImage()
-    
-    def getImage(self):
-        return pygame.image.load(f"assets/barco.png")
 
     def clamp(self, n, minn, maxn):
         return max(min(maxn, n), minn)

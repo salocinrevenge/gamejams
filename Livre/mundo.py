@@ -6,17 +6,14 @@ from programador import Programador
 
 class Mundo():
     def __init__(self) -> None:
-        self.mapaOriginal, self.mapaAtual = self.carregarSala("salas/mundo.txt")
+        self.mapaOriginal, self.mapaAtual = self.carregarSala("salas/mundo0.txt")
         self.salas = self.criarSalas()
-        self.salaAtual = self.salas[self.centro()[0]][self.centro()[1]]
+        self.salaAtual = self.salas[10][6]
         self.camera = Camera(self, (250,250))
         self.programador = Programador(self.salaAtual.pos[0],self.salaAtual.pos[1], self)
         self.camera.setTarget(self.programador)
         self.salaAtual.adicionarPersonagem(self.programador, self.salaAtual.centro())
         self.renderDistance = 3
-
-    def centro(self):
-        return (len(self.salas)//2, len(self.salas[0])//2)
 
     def tick(self):
         posCentral = self.salaAtual.getPos()
@@ -42,6 +39,8 @@ class Mundo():
                 if i+posCentral[0] < 0 or i+posCentral[0] >= len(self.salas) or j+posCentral[1] < 0 or j+posCentral[1] >= len(self.salas[0]):
                     continue
                 self.salas[i+posCentral[0]][j+posCentral[1]].render(screen, self.camera)
+        if self.programador:
+            self.programador.renderHUD(screen)
     
     
     def criarSalas(self):
@@ -49,7 +48,7 @@ class Mundo():
         for i in range(len(self.mapaAtual)):
             salas.append([])
             for j in range(len(self.mapaAtual[i])):
-                salas[-1].append(Sala(random.randint(0,1), self.mapaOriginal[i][j], self, (i,j))) # sorteia de 0 a 9
+                salas[-1].append(Sala(random.randint(0,0), self.mapaOriginal[i][j], self, (i,j))) # sorteia de 0 a 9
         return salas
 
     def carregarSala(self, arquivo):
@@ -71,7 +70,9 @@ class Mundo():
         if posSalaAlvo[0] < 0 or posSalaAlvo[0] >= len(self.salas) or posSalaAlvo[1] < 0 or posSalaAlvo[1] >= len(self.salas[0]):
             return False
         if self.salas[posSalaAlvo[0]][posSalaAlvo[1]].mover(personagem, None, None, x, y):
-            self.salaAtual = self.salas[posSalaAlvo[0]][posSalaAlvo[1]]
+            if isinstance(personagem, Programador):
+                self.salaAtual = self.salas[posSalaAlvo[0]][posSalaAlvo[1]]
+            else:
+                personagem.sala = self.salas[posSalaAlvo[0]][posSalaAlvo[1]]
             return True
         return False
-            

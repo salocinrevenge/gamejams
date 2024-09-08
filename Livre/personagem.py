@@ -4,6 +4,10 @@ class Personagem:
         self.y = y
         self.mundo = mundo
         self.barco = None
+        self.inventario = []
+        self.orientacao = 0
+        self.intervaloPassosMax = 7
+        self.intervaloPassos = 0
 
     def tick(self):
         if self.barco:
@@ -19,6 +23,9 @@ class Personagem:
     def setPos(self, x, y):
         self.x = x
         self.y = y
+        
+    def getPos(self):
+        return self.x, self.y
         
     def setBarco(self, barco):
         self.barco = barco

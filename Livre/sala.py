@@ -5,6 +5,10 @@ from chao import Chao
 from parede import Parede
 from algelin import norm
 from barco import Barco
+from bau import Bau
+from pinguim import Pinguim
+from programador import Programador
+from inimigo import Inimigo
 
 class Sala():
     def __init__(self, num, bioma, mundo, pos) -> None:
@@ -18,22 +22,31 @@ class Sala():
     def getPos(self):
         return self.pos
         
+    def getRealPos(self):
+        return self.pos[0]*len(self.mapaAtual[0]), self.pos[1]*len(self.mapaAtual)
+        
     def spawnEntidades(self):
         entidades = []
         for y, linha in enumerate(self.mapaAtual):
             entidades.append([])
             for x, objeto in enumerate(linha):
                 entidades[-1].append([])
-                if self.posBonus is not None and (x,y) == self.posBonus[1]:
-                    if self.posBonus[0] == 'B':
-                        entidades[-1][-1].append(Barco(self.bioma, x, y))
+                if self.posBonus["B"] is not None and (x,y) == self.posBonus["B"] and self.bioma.lower() == "o":
+                    entidades[-1][-1].append(Barco(self.bioma, x, y))
+                if self.posBonus["E"] is not None and (x,y) in self.posBonus["E"] and self.bioma.lower() != "o": # spawnar entidades
+                    if self.bioma.lower() == "a":
+                        if random.random() < 0.9:
+                            entidades[-1][-1].append(Pinguim(self.mundo,self, x, y))
+                    if self.bioma == "D":
+                        if random.random() < 1:#0.1:
+                            entidades[-1][-1].append(Inimigo(self.mundo,self, x, y))
         return entidades
 
     def carregarSala(self, arquivo):
         mapaOriginal = []
         mapaAtual = []
         
-        self.posBonus = []
+        self.posBonus = {"B":[], "E":[]}
         with open(arquivo, "r") as arquivo:
             for y, linha in enumerate(arquivo):
                 linha = linha.strip()
@@ -46,17 +59,29 @@ class Sala():
                             objeto.append(Chao(self.bioma, x, y))
                         case 'B':
                             objeto.append(Chao(self.bioma, x, y))
-                            if self.bioma != self.bioma.lower():
-                                self.posBonus.append(('B',(x,y)))
+                            if self.bioma != self.bioma.lower(): # Se ele eh maiusculo
+                                self.posBonus["B"].append((x,y))
+                        case 'E':
+                            objeto.append(Chao(self.bioma, x, y))
+                            # if self.bioma != self.bioma.lower(): # Se ele eh maiusculo
+                            self.posBonus["E"].append((x,y))
+                        case 'C':
+                            objeto.append(Chao(self.bioma, x, y))
+                            if self.bioma != self.bioma.lower() and self.bioma.lower() != "o": # Se ele eh maiusculo
+                                objeto.append(Bau(self.bioma, x, y))
                         case '#':
                             objeto.append(Chao(self.bioma, x, y))
                             objeto.append(Parede(self.bioma, x, y))
                     mapaOriginal[-1].append(objeto)
                     mapaAtual[-1].append(objeto)
-        if len(self.posBonus) > 0:
-            self.posBonus = random.choice(self.posBonus)
+        if len(self.posBonus["B"]) > 0:
+            self.posBonus["B"] = random.choice(self.posBonus["B"])
         else:
-            self.posBonus = None
+            self.posBonus["B"] = None
+            
+        # for i in range(len(self.posBonus["E"])):
+        #     if random.random() < 0.3: # 30% de chance de remover
+        #         self.posBonus["E"].pop(i)
         
         return mapaOriginal, mapaAtual
 
@@ -101,7 +126,7 @@ class Sala():
         if dentro:
             bloqueado = False
             for o in self.entidades[y][x]:
-                if isinstance(o, Barco):
+                if isinstance(o, Barco) and isinstance(objeto, Programador):
                     o.setNavegante(objeto)
                     self.entidades[y][x].remove(o)
                     continue
@@ -141,4 +166,17 @@ class Sala():
                     self.entidades[y0][x0].remove(objeto)
                 return True
             
+        return False
+    
+    def interagir(self, personagem):
+        pos = personagem.getPos()
+        for elemento in self.mapaAtual[pos[1]][pos[0]]:
+            if isinstance(elemento, Bau):
+                personagem.inventario += elemento.abrir()
+                return True
+            
+    def moverEntidade(self, entidade, x, y):
+        pos = entidade.getPos()
+        if self.mover(entidade, pos[0], pos[1], x, y):
+            return True
         return False
