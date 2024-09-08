@@ -1,5 +1,9 @@
 mundo:
-O: oceano
-D: deserto
-J: jungle
-A: antartida
+maiusculas sao especiais, podem conter baus ou barcos
+o: oceano
+d: deserto
+j: jungle
+a: antartida
+
+salas:
+B: locais de barcos
