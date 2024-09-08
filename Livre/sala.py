@@ -7,6 +7,7 @@ from algelin import norm
 from barco import Barco
 from bau import Bau
 from pinguim import Pinguim
+from programador import Programador
 
 class Sala():
     def __init__(self, num, bioma, mundo, pos) -> None:
@@ -30,7 +31,11 @@ class Sala():
                     entidades[-1][-1].append(Barco(self.bioma, x, y))
                 if self.posBonus["E"] is not None and (x,y) in self.posBonus["E"] and self.bioma.lower() != "o": # spawnar entidades
                     if self.bioma.lower() == "a":
-                        entidades[-1][-1].append(Pinguim(self.mundo,self, x, y))
+                        if random.random() < 0.9:
+                            entidades[-1][-1].append(Pinguim(self.mundo,self, x, y))
+                    if self.bioma.lower() == "d":
+                        if random.random() < 0.1:
+                            entidades[-1][-1].append(Pinguim(self.mundo,self, x, y))
         return entidades
 
     def carregarSala(self, arquivo):
@@ -54,8 +59,8 @@ class Sala():
                                 self.posBonus["B"].append((x,y))
                         case 'E':
                             objeto.append(Chao(self.bioma, x, y))
-                            if self.bioma != self.bioma.lower(): # Se ele eh maiusculo
-                                self.posBonus["E"].append((x,y))
+                            # if self.bioma != self.bioma.lower(): # Se ele eh maiusculo
+                            self.posBonus["E"].append((x,y))
                         case 'C':
                             objeto.append(Chao(self.bioma, x, y))
                             if self.bioma != self.bioma.lower() and self.bioma.lower() != "o": # Se ele eh maiusculo
@@ -70,9 +75,9 @@ class Sala():
         else:
             self.posBonus["B"] = None
             
-        for i in range(len(self.posBonus["E"])):
-            if random.random() < 0.3: # 30% de chance de remover
-                self.posBonus["E"].pop(i)
+        # for i in range(len(self.posBonus["E"])):
+        #     if random.random() < 0.3: # 30% de chance de remover
+        #         self.posBonus["E"].pop(i)
         
         return mapaOriginal, mapaAtual
 
@@ -117,7 +122,7 @@ class Sala():
         if dentro:
             bloqueado = False
             for o in self.entidades[y][x]:
-                if isinstance(o, Barco):
+                if isinstance(o, Barco) and isinstance(objeto, Programador):
                     o.setNavegante(objeto)
                     self.entidades[y][x].remove(o)
                     continue

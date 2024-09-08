@@ -68,7 +68,10 @@ class Mundo():
         if posSalaAlvo[0] < 0 or posSalaAlvo[0] >= len(self.salas) or posSalaAlvo[1] < 0 or posSalaAlvo[1] >= len(self.salas[0]):
             return False
         if self.salas[posSalaAlvo[0]][posSalaAlvo[1]].mover(personagem, None, None, x, y):
-            self.salaAtual = self.salas[posSalaAlvo[0]][posSalaAlvo[1]]
+            if isinstance(personagem, Programador):
+                self.salaAtual = self.salas[posSalaAlvo[0]][posSalaAlvo[1]]
+            else:
+                personagem.sala = self.salas[posSalaAlvo[0]][posSalaAlvo[1]]
             return True
         return False
             

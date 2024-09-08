@@ -3,7 +3,7 @@ import random
 from personagem import Personagem
 import random
 
-class Pinguim(Personagem):
+class Inimigo(Personagem):
     
     imagem = {"frente": pygame.image.load("assets/pinguim.png")}
     def __init__(self, mundo, sala, x, y) -> None:
