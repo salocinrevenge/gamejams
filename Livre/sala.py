@@ -110,6 +110,9 @@ class Sala():
             for o in self.mapaAtual[y][x]:
                 if isinstance(o, Parede):
                     bloqueado = True
+                if self.bioma.lower() == 'o' and isinstance(o, Chao):
+                    if objeto.barco is None:
+                        bloqueado = True
             
             if bloqueado:
                 return False

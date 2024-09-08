@@ -10,11 +10,12 @@ class Parede():
         self.imagem = self.getImage()
     
     def getImage(self):
-        if self.bioma == "O":
+        self.bioma = self.bioma.lower()
+        if self.bioma == "o":
             return pygame.image.load(f"assets/parede.png")
-        if self.bioma == "D":
-            return pygame.image.load(f"assets/desert.png")
-        if self.bioma == "A":
+        if self.bioma == "d":
+            return pygame.image.load(f"assets/wall desert.png")
+        if self.bioma == "a":
             return pygame.image.load(f"assets/ice.png")
         return pygame.image.load(f"assets/parede.png")
 
