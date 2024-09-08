@@ -24,16 +24,15 @@ class Sala():
             entidades.append([])
             for x, objeto in enumerate(linha):
                 entidades[-1].append([])
-                if self.posBonus is not None and (x,y) == self.posBonus[1]:
-                    if self.posBonus[0] == 'B':
-                        entidades[-1][-1].append(Barco(self.bioma, x, y))
+                if self.posBonus["B"] is not None and (x,y) == self.posBonus["B"]:
+                    entidades[-1][-1].append(Barco(self.bioma, x, y))
         return entidades
 
     def carregarSala(self, arquivo):
         mapaOriginal = []
         mapaAtual = []
         
-        self.posBonus = []
+        self.posBonus = {"B":[], "C":[]}
         with open(arquivo, "r") as arquivo:
             for y, linha in enumerate(arquivo):
                 linha = linha.strip()
@@ -47,16 +46,20 @@ class Sala():
                         case 'B':
                             objeto.append(Chao(self.bioma, x, y))
                             if self.bioma != self.bioma.lower():
-                                self.posBonus.append(('B',(x,y)))
+                                self.posBonus["B"].append((x,y))
+                        case 'C':
+                            objeto.append(Chao(self.bioma, x, y))
+                            if self.bioma != self.bioma.lower():
+                                self.posBonus["C"].append((x,y))
                         case '#':
                             objeto.append(Chao(self.bioma, x, y))
                             objeto.append(Parede(self.bioma, x, y))
                     mapaOriginal[-1].append(objeto)
                     mapaAtual[-1].append(objeto)
-        if len(self.posBonus) > 0:
-            self.posBonus = random.choice(self.posBonus)
+        if len(self.posBonus["B"]) > 0:
+            self.posBonus["B"] = random.choice(self.posBonus["B"])
         else:
-            self.posBonus = None
+            self.posBonus["B"] = None
         
         return mapaOriginal, mapaAtual
 

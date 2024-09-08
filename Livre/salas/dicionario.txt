@@ -6,4 +6,7 @@ j: jungle
 a: antartida
 
 salas:
+.: caminho livre
+#: parede
 B: locais de barcos
+C: locais de baus

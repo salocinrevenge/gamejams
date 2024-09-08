@@ -8,15 +8,12 @@ class Mundo():
     def __init__(self) -> None:
         self.mapaOriginal, self.mapaAtual = self.carregarSala("salas/mundo.txt")
         self.salas = self.criarSalas()
-        self.salaAtual = self.salas[self.centro()[0]][self.centro()[1]]
+        self.salaAtual = self.salas[6][10]
         self.camera = Camera(self, (250,250))
         self.programador = Programador(self.salaAtual.pos[0],self.salaAtual.pos[1], self)
         self.camera.setTarget(self.programador)
         self.salaAtual.adicionarPersonagem(self.programador, self.salaAtual.centro())
         self.renderDistance = 3
-
-    def centro(self):
-        return (len(self.salas)//2, len(self.salas[0])//2)
 
     def tick(self):
         posCentral = self.salaAtual.getPos()
@@ -49,7 +46,7 @@ class Mundo():
         for i in range(len(self.mapaAtual)):
             salas.append([])
             for j in range(len(self.mapaAtual[i])):
-                salas[-1].append(Sala(random.randint(0,1), self.mapaOriginal[i][j], self, (i,j))) # sorteia de 0 a 9
+                salas[-1].append(Sala(random.randint(0,0), self.mapaOriginal[i][j], self, (i,j))) # sorteia de 0 a 9
         return salas
 
     def carregarSala(self, arquivo):
