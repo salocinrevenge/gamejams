@@ -9,8 +9,10 @@ class Programador(Personagem):
         self.demanda = None
         self.velX = 0
         self.velY = 0
+        self.vida = 100
     
     imagem = [pygame.image.load("assets/programador01.png"), pygame.image.load("assets/programador02.png"), pygame.image.load("assets/programador03.png"), pygame.image.load("assets/programador04.png")]        
+    imgMoeda = pygame.image.load("assets/moeda.png")
     
     def tick(self):
         self.intervaloPassos -= 1
@@ -31,11 +33,31 @@ class Programador(Personagem):
             self.demanda = None
         super().tick()
 
+    def vidaUpdate(self, vida):
+        self.vida += vida
+        if self.vida <= 0:
+            self.vida = 0
+        if self.vida >= 100:
+            self.vida = 100
+    
     
     def render(self, screen, camera, deslocamento):
         camera.render(screen, self.imagem[self.orientacao], (self.x+deslocamento[0], self.y+deslocamento[1]))
         super().render(screen, camera, deslocamento)
-        
+    
+    def renderHUD(self, screen):
+        cor = (170,170,170)
+        pygame.draw.rect(screen, cor, (10, 10, 215, 40))
+        screen.blit(self.imgMoeda, (-10, 2))
+        screen.blit(self.imgMoeda, ( 15, 2))
+        screen.blit(self.imgMoeda, ( 40, 2))
+        screen.blit(self.imgMoeda, ( 65, 2))
+        screen.blit(self.imgMoeda, ( 90, 2))
+        screen.blit(self.imgMoeda, (115, 2))
+        screen.blit(self.imgMoeda, (140, 2))
+        screen.blit(self.imgMoeda, (165, 2))
+        pygame.draw.rect(screen, cor, (10+int((self.vida*215/100)), 10, int(215-(self.vida)*215/100), 40))
+
     def mover(self, dx, dy):
         self.demanda = (dx, dy)
         self.intervaloPassos = self.intervaloPassosMax
@@ -66,6 +88,8 @@ class Programador(Personagem):
                 self.limitarVelocidade()
             if evento.key == pygame.K_SPACE:
                 self.mundo.salaAtual.interagir(self)
+            if evento.key == pygame.K_0:
+                self.vidaUpdate(-10)
         if evento.type == pygame.KEYUP:
             if evento.key == pygame.K_w or evento.key == pygame.K_UP:
                 self.velY += 1
@@ -79,4 +103,5 @@ class Programador(Personagem):
             if evento.key == pygame.K_d or evento.key == pygame.K_RIGHT:
                 self.velX -= 1
                 self.limitarVelocidade()
+                
                 

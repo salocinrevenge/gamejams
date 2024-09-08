@@ -39,6 +39,8 @@ class Mundo():
                 if i+posCentral[0] < 0 or i+posCentral[0] >= len(self.salas) or j+posCentral[1] < 0 or j+posCentral[1] >= len(self.salas[0]):
                     continue
                 self.salas[i+posCentral[0]][j+posCentral[1]].render(screen, self.camera)
+        if self.programador:
+            self.programador.renderHUD(screen)
     
     
     def criarSalas(self):
@@ -74,4 +76,3 @@ class Mundo():
                 personagem.sala = self.salas[posSalaAlvo[0]][posSalaAlvo[1]]
             return True
         return False
-            

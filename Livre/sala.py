@@ -8,6 +8,7 @@ from barco import Barco
 from bau import Bau
 from pinguim import Pinguim
 from programador import Programador
+from inimigo import Inimigo
 
 class Sala():
     def __init__(self, num, bioma, mundo, pos) -> None:
@@ -21,6 +22,9 @@ class Sala():
     def getPos(self):
         return self.pos
         
+    def getRealPos(self):
+        return self.pos[0]*len(self.mapaAtual[0]), self.pos[1]*len(self.mapaAtual)
+        
     def spawnEntidades(self):
         entidades = []
         for y, linha in enumerate(self.mapaAtual):
@@ -33,9 +37,9 @@ class Sala():
                     if self.bioma.lower() == "a":
                         if random.random() < 0.9:
                             entidades[-1][-1].append(Pinguim(self.mundo,self, x, y))
-                    if self.bioma.lower() == "d":
-                        if random.random() < 0.1:
-                            entidades[-1][-1].append(Pinguim(self.mundo,self, x, y))
+                    if self.bioma == "D":
+                        if random.random() < 1:#0.1:
+                            entidades[-1][-1].append(Inimigo(self.mundo,self, x, y))
         return entidades
 
     def carregarSala(self, arquivo):
