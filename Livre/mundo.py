@@ -18,7 +18,7 @@ class Mundo():
         self.renderDistance = 3
         self.espalharTesoros()
 
-        pygame.mixer.music.load("som/sea.mp3")
+        pygame.mixer.music.load("som/sea curto.mp3")
         pygame.mixer.music.play(-1)
 
     def tick(self):
