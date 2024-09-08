@@ -1,8 +1,12 @@
 import pygame
 from botao import Botao
 from mundo import Mundo
+from excessoes.Win import Win
+from excessoes.Die import Die
 
 class Menu():
+    vitoria = pygame.image.load("assets/parabens.png")
+    
     def __init__(self) -> None:
         self.criaBotoesMenuPrincipal()
         self.criaBotoesMenuCriar()
@@ -12,7 +16,12 @@ class Menu():
 
     def tick(self):
         if self.STATE == "Mundo":
-            self.mundo.tick()
+            try:
+                self.mundo.tick()
+            except Win:
+                self.STATE = "Win"
+            except Die:
+                self.STATE = "Die"
 
     def render(self, screen):
         if self.STATE == "Menu":
@@ -25,6 +34,12 @@ class Menu():
             return
         elif self.STATE == "Mundo":
             self.mundo.render(screen)
+            return
+        elif self.STATE == "Win":
+            screen.fill((0,255,0))
+            return
+        elif self.STATE == "Die":
+            screen.fill((255,0,0))
             return
         
     def criarMundo(self):
