@@ -13,7 +13,7 @@ class Mundo():
         self.programador = Programador(self.salaAtual.pos[0],self.salaAtual.pos[1], self)
         self.camera.setTarget(self.programador)
         self.salaAtual.adicionarPersonagem(self.programador, self.salaAtual.centro())
-        self.renderDistance = 2
+        self.renderDistance = 3
 
     def centro(self):
         return (len(self.salas)//2, len(self.salas[0])//2)
@@ -49,7 +49,7 @@ class Mundo():
         for i in range(len(self.mapaAtual)):
             salas.append([])
             for j in range(len(self.mapaAtual[i])):
-                salas[-1].append(Sala(random.randint(0,0), self.mapaOriginal[i][j], self, (i,j))) # sorteia de 0 a 9
+                salas[-1].append(Sala(random.randint(0,1), self.mapaOriginal[i][j], self, (i,j))) # sorteia de 0 a 9
         return salas
 
     def carregarSala(self, arquivo):
