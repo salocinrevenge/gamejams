@@ -5,6 +5,8 @@ from chao import Chao
 from parede import Parede
 from algelin import norm
 from barco import Barco
+from bau import Bau
+from pinguim import Pinguim
 
 class Sala():
     def __init__(self, num, bioma, mundo, pos) -> None:
@@ -24,15 +26,18 @@ class Sala():
             entidades.append([])
             for x, objeto in enumerate(linha):
                 entidades[-1].append([])
-                if self.posBonus["B"] is not None and (x,y) == self.posBonus["B"]:
+                if self.posBonus["B"] is not None and (x,y) == self.posBonus["B"] and self.bioma.lower() == "o":
                     entidades[-1][-1].append(Barco(self.bioma, x, y))
+                if self.posBonus["E"] is not None and (x,y) in self.posBonus["E"] and self.bioma.lower() != "o": # spawnar entidades
+                    if self.bioma.lower() == "a":
+                        entidades[-1][-1].append(Pinguim(self.mundo,self, x, y))
         return entidades
 
     def carregarSala(self, arquivo):
         mapaOriginal = []
         mapaAtual = []
         
-        self.posBonus = {"B":[], "C":[]}
+        self.posBonus = {"B":[], "E":[]}
         with open(arquivo, "r") as arquivo:
             for y, linha in enumerate(arquivo):
                 linha = linha.strip()
@@ -45,12 +50,16 @@ class Sala():
                             objeto.append(Chao(self.bioma, x, y))
                         case 'B':
                             objeto.append(Chao(self.bioma, x, y))
-                            if self.bioma != self.bioma.lower():
+                            if self.bioma != self.bioma.lower(): # Se ele eh maiusculo
                                 self.posBonus["B"].append((x,y))
+                        case 'E':
+                            objeto.append(Chao(self.bioma, x, y))
+                            if self.bioma != self.bioma.lower(): # Se ele eh maiusculo
+                                self.posBonus["E"].append((x,y))
                         case 'C':
                             objeto.append(Chao(self.bioma, x, y))
-                            if self.bioma != self.bioma.lower():
-                                self.posBonus["C"].append((x,y))
+                            if self.bioma != self.bioma.lower() and self.bioma.lower() != "o": # Se ele eh maiusculo
+                                objeto.append(Bau(self.bioma, x, y))
                         case '#':
                             objeto.append(Chao(self.bioma, x, y))
                             objeto.append(Parede(self.bioma, x, y))
@@ -60,6 +69,10 @@ class Sala():
             self.posBonus["B"] = random.choice(self.posBonus["B"])
         else:
             self.posBonus["B"] = None
+            
+        for i in range(len(self.posBonus["E"])):
+            if random.random() < 0.3: # 30% de chance de remover
+                self.posBonus["E"].pop(i)
         
         return mapaOriginal, mapaAtual
 
@@ -145,3 +158,10 @@ class Sala():
                 return True
             
         return False
+    
+    def interagir(self, personagem):
+        pos = personagem.getPos()
+        for elemento in self.mapaAtual[pos[1]][pos[0]]:
+            if isinstance(elemento, Bau):
+                personagem.inventario += elemento.abrir()
+                return True

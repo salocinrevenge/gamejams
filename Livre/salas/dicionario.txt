@@ -10,3 +10,4 @@ salas:
 #: parede
 B: locais de barcos
 C: locais de baus
+E: local de entidade

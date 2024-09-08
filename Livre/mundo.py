@@ -8,7 +8,7 @@ class Mundo():
     def __init__(self) -> None:
         self.mapaOriginal, self.mapaAtual = self.carregarSala("salas/mundo.txt")
         self.salas = self.criarSalas()
-        self.salaAtual = self.salas[6][10]
+        self.salaAtual = self.salas[10][6]
         self.camera = Camera(self, (250,250))
         self.programador = Programador(self.salaAtual.pos[0],self.salaAtual.pos[1], self)
         self.camera.setTarget(self.programador)

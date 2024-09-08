@@ -5,22 +5,15 @@ from personagem import Personagem
 class Programador(Personagem):
     def __init__(self, x, y, mundo) -> None:
         super().__init__(x, y, mundo)
-        self.carregarImagens()
         self.mundo = mundo
         self.demanda = None
         self.velX = 0
         self.velY = 0
         self.intervaloPassosMax = 7
         self.intervaloPassos = 0
-        self.orientacao = 0
-        
-    def carregarImagens(self):
-        self.imagem = []
-        self.imagem.append(pygame.image.load("assets/programador01.png"))
-        self.imagem.append(pygame.image.load("assets/programador02.png"))
-        self.imagem.append(pygame.image.load("assets/programador03.png"))
-        self.imagem.append(pygame.image.load("assets/programador04.png"))
-        
+    
+    imagem = [pygame.image.load("assets/programador01.png"), pygame.image.load("assets/programador02.png"), pygame.image.load("assets/programador03.png"), pygame.image.load("assets/programador04.png")]        
+    
     def tick(self):
         self.intervaloPassos -= 1
         if self.intervaloPassos <= 0:
@@ -73,6 +66,8 @@ class Programador(Personagem):
             if evento.key == pygame.K_d or evento.key == pygame.K_RIGHT:
                 self.velX += 1
                 self.limitarVelocidade()
+            if evento.key == pygame.K_SPACE:
+                self.mundo.salaAtual.interagir(self)
         if evento.type == pygame.KEYUP:
             if evento.key == pygame.K_w or evento.key == pygame.K_UP:
                 self.velY += 1
@@ -86,3 +81,4 @@ class Programador(Personagem):
             if evento.key == pygame.K_d or evento.key == pygame.K_RIGHT:
                 self.velX -= 1
                 self.limitarVelocidade()
+                
