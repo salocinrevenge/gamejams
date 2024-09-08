@@ -17,6 +17,8 @@ class Chao():
             return pygame.image.load(f"assets/desert.png")
         if self.bioma == "a":
             return pygame.image.load(f"assets/ice.png")
+        if self.bioma == "j":
+            return pygame.image.load(f"assets/grass.png")
         return pygame.image.load(f"assets/borda.png")
 
     def clamp(self, n, minn, maxn):

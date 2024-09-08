@@ -5,13 +5,21 @@ from personagem import Personagem
 class Programador(Personagem):
     def __init__(self, x, y, mundo) -> None:
         super().__init__(x, y, mundo)
-        self.imagem = pygame.image.load("assets/programador.png")
+        self.carregarImagens()
         self.mundo = mundo
         self.demanda = None
         self.velX = 0
         self.velY = 0
         self.intervaloPassosMax = 7
         self.intervaloPassos = 0
+        self.orientacao = 0
+        
+    def carregarImagens(self):
+        self.imagem = []
+        self.imagem.append(pygame.image.load("assets/programador01.png"))
+        self.imagem.append(pygame.image.load("assets/programador02.png"))
+        self.imagem.append(pygame.image.load("assets/programador03.png"))
+        self.imagem.append(pygame.image.load("assets/programador04.png"))
         
     def tick(self):
         self.intervaloPassos -= 1
@@ -20,13 +28,21 @@ class Programador(Personagem):
             
         if self.demanda:
             dx, dy = self.demanda
+            if dy == -1:
+                self.orientacao = 3
+            if dy == 1:
+                self.orientacao = 1
+            if dx == -1:
+                self.orientacao = 2
+            if dx == 1:
+                self.orientacao = 0
             self.mundo.salaAtual.mover(self, self.x, self.y, self.x+dx, self.y+dy)
             self.demanda = None
         super().tick()
 
     
     def render(self, screen, camera, deslocamento):
-        camera.render(screen, self.imagem, (self.x+deslocamento[0], self.y+deslocamento[1]))
+        camera.render(screen, self.imagem[self.orientacao], (self.x+deslocamento[0], self.y+deslocamento[1]))
         super().render(screen, camera, deslocamento)
         
     def mover(self, dx, dy):
