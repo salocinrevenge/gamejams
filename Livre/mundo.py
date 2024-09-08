@@ -8,7 +8,7 @@ from item import Item
 class Mundo():
     def __init__(self) -> None:
         self.baus = []
-        self.mapaOriginal, self.mapaAtual = self.carregarSala("salas/mundo0.txt")
+        self.mapaOriginal, self.mapaAtual = self.carregarSala("salas/mundo.txt")
         self.salas = self.criarSalas()
         self.salaAtual = self.salas[10][6]
         self.camera = Camera(self, (250,250))
@@ -52,7 +52,7 @@ class Mundo():
         for i in range(len(self.mapaAtual)):
             salas.append([])
             for j in range(len(self.mapaAtual[i])):
-                sala = Sala(random.randint(0,0), self.mapaOriginal[i][j], self, (i,j))
+                sala = Sala(random.randint(1,10), self.mapaOriginal[i][j], self, (i,j))
                 salas[-1].append(sala) # sorteia de 0 a 9
                 self.baus += sala.baus
                 
