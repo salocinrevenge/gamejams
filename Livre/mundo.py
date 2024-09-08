@@ -18,6 +18,9 @@ class Mundo():
         self.renderDistance = 3
         self.espalharTesoros()
 
+        pygame.mixer.music.load("som/sea.mp3")
+        pygame.mixer.music.play(-1)
+
     def tick(self):
         posCentral = self.salaAtual.getPos()
         for i in range(-self.renderDistance,self.renderDistance+1):
