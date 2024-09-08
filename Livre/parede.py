@@ -10,7 +10,7 @@ class Parede():
         self.imagem = self.getImage()
         
     imagens = {
-                "o": pygame.image.load("assets/parede.png"), "d": pygame.image.load("assets/desert.png"),
+                "o": pygame.image.load("assets/rock.png"), "d": pygame.image.load("assets/desert.png"),
                 "a": pygame.image.load("assets/ice.png"), "j": pygame.image.load("assets/grass.png"),
                 "default": pygame.image.load("assets/parede.png")
               }

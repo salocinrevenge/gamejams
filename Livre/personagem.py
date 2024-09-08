@@ -6,6 +6,8 @@ class Personagem:
         self.barco = None
         self.inventario = []
         self.orientacao = 0
+        self.intervaloPassosMax = 7
+        self.intervaloPassos = 0
 
     def tick(self):
         if self.barco:

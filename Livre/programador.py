@@ -9,8 +9,6 @@ class Programador(Personagem):
         self.demanda = None
         self.velX = 0
         self.velY = 0
-        self.intervaloPassosMax = 7
-        self.intervaloPassos = 0
     
     imagem = [pygame.image.load("assets/programador01.png"), pygame.image.load("assets/programador02.png"), pygame.image.load("assets/programador03.png"), pygame.image.load("assets/programador04.png")]        
     

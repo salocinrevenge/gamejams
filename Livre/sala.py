@@ -133,7 +133,10 @@ class Sala():
             if bloqueado:
                 return False
             if x0 is not None and y0 is not None:
-                self.entidades[y0][x0].remove(objeto)
+                try:
+                    self.entidades[y0][x0].remove(objeto)
+                except ValueError:
+                    pass
             self.entidades[y][x].append(objeto)
             
             objeto.setPos(x, y)
@@ -165,3 +168,9 @@ class Sala():
             if isinstance(elemento, Bau):
                 personagem.inventario += elemento.abrir()
                 return True
+            
+    def moverEntidade(self, entidade, x, y):
+        pos = entidade.getPos()
+        if self.mover(entidade, pos[0], pos[1], x, y):
+            return True
+        return False

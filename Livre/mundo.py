@@ -6,7 +6,7 @@ from programador import Programador
 
 class Mundo():
     def __init__(self) -> None:
-        self.mapaOriginal, self.mapaAtual = self.carregarSala("salas/mundo.txt")
+        self.mapaOriginal, self.mapaAtual = self.carregarSala("salas/mundo0.txt")
         self.salas = self.criarSalas()
         self.salaAtual = self.salas[10][6]
         self.camera = Camera(self, (250,250))
