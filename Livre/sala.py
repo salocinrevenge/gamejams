@@ -15,6 +15,7 @@ class Sala():
         path = f"salas/sala{num}.txt"
         self.pos = pos
         self.bioma = bioma
+        self.baus = []
         self.mapaOriginal, self.mapaAtual = self.carregarSala(path)
         self.mundo = mundo
         self.entidades = self.spawnEntidades()
@@ -38,7 +39,10 @@ class Sala():
                         if random.random() < 0.9:
                             entidades[-1][-1].append(Pinguim(self.mundo,self, x, y))
                     if self.bioma == "D":
-                        if random.random() < 1:#0.1:
+                        if random.random() < 0.6:
+                            entidades[-1][-1].append(Inimigo(self.mundo,self, x, y))
+                    if self.bioma == "J":
+                        if random.random() < 0.1:
                             entidades[-1][-1].append(Inimigo(self.mundo,self, x, y))
         return entidades
 
@@ -68,7 +72,10 @@ class Sala():
                         case 'C':
                             objeto.append(Chao(self.bioma, x, y))
                             if self.bioma != self.bioma.lower() and self.bioma.lower() != "o": # Se ele eh maiusculo
-                                objeto.append(Bau(self.bioma, x, y))
+                                bau = Bau(self.bioma, x, y)
+                                objeto.append(bau)
+                                self.baus.append(bau)
+                                
                         case '#':
                             objeto.append(Chao(self.bioma, x, y))
                             objeto.append(Parede(self.bioma, x, y))

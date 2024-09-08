@@ -10,7 +10,11 @@ class Bau():
         self.x = x
         self.y = y
         self.estado = "closed"
-        self.conteudo = [Item("moeda"), Item("firefox"), Item("pago visualCode"), Item("livre vscode"), Item("livre libresprite")]
+        self.conteudo = []
+        if random.random() < 0.7:
+            self.conteudo.append(Item("moeda"))
+        if random.random() < 0.2:
+            self.conteudo.append(Item("pago visualCode"))
 
     def render(self, screen, camera, deslocamento):
         camera.render(screen, self.imagem[self.estado], (self.x+deslocamento[0], self.y+deslocamento[1]))

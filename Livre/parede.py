@@ -10,9 +10,9 @@ class Parede():
         self.imagem = self.getImage()
         
     imagens = {
-                "o": pygame.image.load("assets/rock.png"), "d": pygame.image.load("assets/desert.png"),
-                "a": pygame.image.load("assets/wall ice.png"), "j": pygame.image.load("assets/grass.png"),
-                "default": pygame.image.load("assets/parede.png")
+                "o": pygame.image.load("assets/rock.png"), "d": pygame.image.load("assets/wall desert.png"),
+                "a": pygame.image.load("assets/wall ice.png"), "j": pygame.image.load("assets/tree.png"),
+                "default": pygame.image.load("assets/parede.png"), "apple": pygame.image.load("assets/tree with apple.png")
               }
     
     def getImage(self):
@@ -20,6 +20,9 @@ class Parede():
         self.b = self.bioma
         if self.b not in self.imagens.keys():
             self.b = "default"
+        if self.b == "j":
+            if random.random() < 0.4:
+                self.b = "apple"
             
 
     def clamp(self, n, minn, maxn):

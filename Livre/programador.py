@@ -1,4 +1,6 @@
 import pygame
+from excessoes.Win import Win
+from excessoes.Die import Die
 
 from personagem import Personagem
 
@@ -10,6 +12,9 @@ class Programador(Personagem):
         self.velX = 0
         self.velY = 0
         self.vida = 100
+        self.objetivos = ["livre libresprite", "livre vscode", "firefox"]
+        self.acabarJogo = False
+        self.contadorAcabarJogo = 200
     
     imagem = [pygame.image.load("assets/programador01.png"), pygame.image.load("assets/programador02.png"), pygame.image.load("assets/programador03.png"), pygame.image.load("assets/programador04.png")]        
     imgMoeda = pygame.image.load("assets/moeda.png")
@@ -31,6 +36,21 @@ class Programador(Personagem):
                 self.orientacao = 0
             self.mundo.salaAtual.mover(self, self.x, self.y, self.x+dx, self.y+dy)
             self.demanda = None
+        for item in self.inventario:
+            item.tick()
+            if not item.agiu:
+                item.agiu = True
+                self.vidaUpdate(item.vida[item.tipo])
+                if item.tipo in self.objetivos:
+                    self.objetivos.remove(item.tipo)
+                if len(self.objetivos) == 0:
+                    self.acabarJogo = True
+        if self.acabarJogo:
+            self.contadorAcabarJogo -= 1
+            if self.contadorAcabarJogo <= 0:
+                raise Win("win")
+        if self.vida <= 0:
+            raise Die("lose")
         super().tick()
 
     def vidaUpdate(self, vida):
@@ -43,6 +63,8 @@ class Programador(Personagem):
     
     def render(self, screen, camera, deslocamento):
         camera.render(screen, self.imagem[self.orientacao], (self.x+deslocamento[0], self.y+deslocamento[1]))
+        for item in self.inventario:
+            item.render(screen, camera, deslocamento, (self.x, self.y))
         super().render(screen, camera, deslocamento)
     
     def renderHUD(self, screen):
@@ -112,6 +134,10 @@ class Programador(Personagem):
         
     def renderItens(self, screen, cor):
         pygame.draw.rect(screen, cor, (10, 50, 215, 40))
-        for i, item in enumerate(self.inventario):
-            item.render(screen,(i*32,40))
+        i = 0
+        for item in self.inventario:
+            if item.tipo in ("moeda", "pago visualCode"):
+                continue
+            item.renderHUD(screen,(i*40,30))
+            i+=1
                 

@@ -3,9 +3,11 @@ from sala import Sala
 import random
 from camera import Camera
 from programador import Programador
+from item import Item
 
 class Mundo():
     def __init__(self) -> None:
+        self.baus = []
         self.mapaOriginal, self.mapaAtual = self.carregarSala("salas/mundo0.txt")
         self.salas = self.criarSalas()
         self.salaAtual = self.salas[10][6]
@@ -14,6 +16,7 @@ class Mundo():
         self.camera.setTarget(self.programador)
         self.salaAtual.adicionarPersonagem(self.programador, self.salaAtual.centro())
         self.renderDistance = 3
+        self.espalharTesoros()
 
     def tick(self):
         posCentral = self.salaAtual.getPos()
@@ -33,6 +36,7 @@ class Mundo():
                 self.salas[i+posCentral[0]][j+posCentral[1]].input(evento)
     
     def render(self, screen):
+        screen.fill((200,255,255))
         posCentral = self.salaAtual.getPos()
         for i in range(-self.renderDistance,self.renderDistance+1):
             for j in range(-self.renderDistance,self.renderDistance+1):
@@ -48,7 +52,10 @@ class Mundo():
         for i in range(len(self.mapaAtual)):
             salas.append([])
             for j in range(len(self.mapaAtual[i])):
-                salas[-1].append(Sala(random.randint(0,0), self.mapaOriginal[i][j], self, (i,j))) # sorteia de 0 a 9
+                sala = Sala(random.randint(0,0), self.mapaOriginal[i][j], self, (i,j))
+                salas[-1].append(sala) # sorteia de 0 a 9
+                self.baus += sala.baus
+                
         return salas
 
     def carregarSala(self, arquivo):
@@ -65,6 +72,14 @@ class Mundo():
         mapaAtual = [list(x) for x in zip(*mapaAtual)]
         
         return mapaOriginal, mapaAtual
+    
+    
+    def espalharTesoros(self):
+        tesouros = [Item("firefox"), Item("livre vscode"), Item("livre libresprite")]
+        for tesouro in tesouros:
+            bau = random.choice(self.baus)
+            self.baus.remove(bau)
+            bau.conteudo.append(tesouro)
     
     def mover(self, personagem, posSalaAlvo, x, y):
         if posSalaAlvo[0] < 0 or posSalaAlvo[0] >= len(self.salas) or posSalaAlvo[1] < 0 or posSalaAlvo[1] >= len(self.salas[0]):
