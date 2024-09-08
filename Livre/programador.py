@@ -47,16 +47,9 @@ class Programador(Personagem):
     
     def renderHUD(self, screen):
         cor = (170,170,170)
-        pygame.draw.rect(screen, cor, (10, 10, 215, 40))
-        screen.blit(self.imgMoeda, (-10, 2))
-        screen.blit(self.imgMoeda, ( 15, 2))
-        screen.blit(self.imgMoeda, ( 40, 2))
-        screen.blit(self.imgMoeda, ( 65, 2))
-        screen.blit(self.imgMoeda, ( 90, 2))
-        screen.blit(self.imgMoeda, (115, 2))
-        screen.blit(self.imgMoeda, (140, 2))
-        screen.blit(self.imgMoeda, (165, 2))
-        pygame.draw.rect(screen, cor, (10+int((self.vida*215/100)), 10, int(215-(self.vida)*215/100), 40))
+        self.renderHP(screen, cor)
+        self.renderItens(screen, cor)
+        
 
     def mover(self, dx, dy):
         self.demanda = (dx, dy)
@@ -104,4 +97,21 @@ class Programador(Personagem):
                 self.velX -= 1
                 self.limitarVelocidade()
                 
+                
+    def renderHP(self, screen, cor):
+        pygame.draw.rect(screen, cor, (10, 10, 215, 40))
+        screen.blit(self.imgMoeda, (-10, 2))
+        screen.blit(self.imgMoeda, ( 15, 2))
+        screen.blit(self.imgMoeda, ( 40, 2))
+        screen.blit(self.imgMoeda, ( 65, 2))
+        screen.blit(self.imgMoeda, ( 90, 2))
+        screen.blit(self.imgMoeda, (115, 2))
+        screen.blit(self.imgMoeda, (140, 2))
+        screen.blit(self.imgMoeda, (165, 2))
+        pygame.draw.rect(screen, cor, (10+int((self.vida*215/100)), 10, int(215-(self.vida)*215/100), 40))
+        
+    def renderItens(self, screen, cor):
+        pygame.draw.rect(screen, cor, (10, 50, 215, 40))
+        for i, item in enumerate(self.inventario):
+            item.render(screen,(i*32,40))
                 

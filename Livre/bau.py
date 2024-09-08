@@ -1,5 +1,6 @@
 import pygame
 import random
+from item import Item
 
 class Bau():
     
@@ -9,7 +10,7 @@ class Bau():
         self.x = x
         self.y = y
         self.estado = "closed"
-        self.conteudo = []
+        self.conteudo = [Item("moeda"), Item("firefox"), Item("pago visualCode"), Item("livre vscode"), Item("livre libresprite")]
 
     def render(self, screen, camera, deslocamento):
         camera.render(screen, self.imagem[self.estado], (self.x+deslocamento[0], self.y+deslocamento[1]))
