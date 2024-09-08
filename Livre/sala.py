@@ -133,6 +133,8 @@ class Sala():
             posSalaAlvo[1] += self.pos[1]
             if self.mundo.mover(objeto, posSalaAlvo, x%len(self.mapaAtual[0]), y%len(self.mapaAtual)):
                 if x0 is not None and y0 is not None:
+                    if objeto.barco is not None and self.mundo.salaAtual.bioma.lower() != 'o':
+                        self.entidades[y0][x0].append(objeto.largarBarco())
                     self.entidades[y0][x0].remove(objeto)
                 return True
             

@@ -20,7 +20,7 @@ class Coracao():
         self.menu = Menu()
         # Criar a janela
         self.screen = pygame.display.set_mode((self.WINDOW_WIDTH, self.WINDOW_HEIGHT), pygame.RESIZABLE)
-        pygame.display.set_caption("Ribopolho chega em Marte") # titulo da janela
+        pygame.display.set_caption("Piratas da Antartida") # titulo da janela
         
 
 

@@ -24,3 +24,8 @@ class Personagem:
         
     def setBarco(self, barco):
         self.barco = barco
+        
+    def largarBarco(self):
+        barco = self.barco
+        self.barco = None
+        return barco

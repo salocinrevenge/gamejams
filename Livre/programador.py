@@ -14,7 +14,6 @@ class Programador(Personagem):
         self.intervaloPassos = 0
         
     def tick(self):
-        super().tick()
         self.intervaloPassos -= 1
         if self.intervaloPassos <= 0:
             self.mover(self.velX, self.velY)
@@ -23,6 +22,7 @@ class Programador(Personagem):
             dx, dy = self.demanda
             self.mundo.salaAtual.mover(self, self.x, self.y, self.x+dx, self.y+dy)
             self.demanda = None
+        super().tick()
 
     
     def render(self, screen, camera, deslocamento):

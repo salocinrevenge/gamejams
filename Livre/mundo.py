@@ -19,13 +19,13 @@ class Mundo():
         return (len(self.salas)//2, len(self.salas[0])//2)
 
     def tick(self):
-        self.camera.tick()
         posCentral = self.salaAtual.getPos()
         for i in range(-self.renderDistance,self.renderDistance+1):
             for j in range(-self.renderDistance,self.renderDistance+1):
                 if i+posCentral[0] < 0 or i+posCentral[0] >= len(self.salas) or j+posCentral[1] < 0 or j+posCentral[1] >= len(self.salas[0]):
                     continue
                 self.salas[i+posCentral[0]][j+posCentral[1]].tick()
+        self.camera.tick()
         
     def input(self, evento):
         posCentral = self.salaAtual.getPos()
