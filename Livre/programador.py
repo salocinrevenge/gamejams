@@ -15,6 +15,7 @@ class Programador(Personagem):
         self.objetivos = ["livre libresprite", "livre vscode", "firefox"]
         self.acabarJogo = False
         self.contadorAcabarJogo = 200
+        self.hack = None
     
     imagem = [pygame.image.load("assets/programador01.png"), pygame.image.load("assets/programador02.png"), pygame.image.load("assets/programador03.png"), pygame.image.load("assets/programador04.png")]        
     imgMoeda = pygame.image.load("assets/moeda.png")
@@ -51,6 +52,11 @@ class Programador(Personagem):
                 raise Win("win")
         if self.vida <= 0:
             raise Die("lose")
+        
+        if self.hack == "die":
+            raise Die("lose")
+        if self.hack == "win":
+            raise Win("win")
         super().tick()
 
     def vidaUpdate(self, vida):
@@ -103,8 +109,13 @@ class Programador(Personagem):
                 self.limitarVelocidade()
             if evento.key == pygame.K_SPACE:
                 self.mundo.salaAtual.interagir(self)
-            if evento.key == pygame.K_0:
-                self.vidaUpdate(-10)
+            # if evento.key == pygame.K_0:
+            #     self.vidaUpdate(-10)
+            # if evento.key == pygame.K_1:
+            #     self.hack = "die"
+            # if evento.key == pygame.K_2:
+            #     self.hack = "win"
+            
         if evento.type == pygame.KEYUP:
             if evento.key == pygame.K_w or evento.key == pygame.K_UP:
                 self.velY += 1

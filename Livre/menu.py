@@ -6,6 +6,7 @@ from excessoes.Die import Die
 
 class Menu():
     vitoria = pygame.image.load("assets/parabens.png")
+    derrota = pygame.image.load("assets/derrota.png")
     
     def __init__(self) -> None:
         self.criaBotoesMenuPrincipal()
@@ -36,10 +37,10 @@ class Menu():
             self.mundo.render(screen)
             return
         elif self.STATE == "Win":
-            screen.fill((0,255,0))
+            screen.blit(self.vitoria, (200,250))
             return
         elif self.STATE == "Die":
-            screen.fill((255,0,0))
+            screen.blit(self.derrota, (200,250))
             return
         
     def criarMundo(self):
@@ -61,7 +62,6 @@ class Menu():
                 for botao in self.botoesMenuPrincipal:
                     clique = botao.identificaClique(evento.pos)
                     if clique:
-                        print(clique)
                         if clique == "Criar Mundo":
                             self.STATE = clique
                             return
@@ -69,10 +69,15 @@ class Menu():
                 for botao in self.botoesMenuCriar:
                     clique = botao.identificaClique(evento.pos)
                     if clique:
-                        print(clique)
                         if clique == "Criar":
                             self.STATE = "Mundo"
                             self.criarMundo()
                             return
         if self.STATE == "Mundo":
-            self.mundo.input(evento)
+            try:
+                self.mundo.input(evento)
+            except Win:
+                self.STATE = "Win"
+            except Die:
+                self.STATE = "Die"
+            
