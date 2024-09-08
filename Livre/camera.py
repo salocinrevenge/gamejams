@@ -23,12 +23,6 @@ class Camera():
         x,y = toIsometric(pos[0], pos[1])
         screen.blit(imagem, (x * 32+self.x, y * 32+self.y))
         
-    def renderAnim(self, screen, imagem, pos, frame):
-        x,y = toIsometric(pos[0], pos[1])
-        
-        imagem = pygame.transform.
-        screen.blit(imagem, (x * 32+self.x, y * 32+self.y))
-        
     
     def input(self, evento):
         pass

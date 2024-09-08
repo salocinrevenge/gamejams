@@ -94,10 +94,12 @@ class Sala():
 
 
     def tick(self):
-        for y, linha in enumerate(self.entidades):
+        for y, linha in enumerate(self.mapaAtual):
             for x, objeto in enumerate(linha):
                 for o in objeto:
                     o.tick()
+                for e in self.entidades[y][x]:
+                    e.tick() 
 
     def input(self, evento):
         for y, linha in enumerate(self.entidades):
