@@ -1,12 +1,3 @@
-textura agua
-textura personagem
-textura barco
-textura windows (inimigo)
-textura bau
-textura deserto
-textura jungle
-textura antartida
-textura pinguim
 textura arvore jungle
 textura cacto
 textura softwares
@@ -25,3 +16,5 @@ outras animacoes
 outros sons
 
 musica de fundo
+
+ola
