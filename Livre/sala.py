@@ -133,10 +133,7 @@ class Sala():
             if bloqueado:
                 return False
             if x0 is not None and y0 is not None:
-                try:
-                    self.entidades[y0][x0].remove(objeto)
-                except ValueError:
-                    pass
+                self.entidades[y0][x0].remove(objeto)
             self.entidades[y][x].append(objeto)
             
             objeto.setPos(x, y)

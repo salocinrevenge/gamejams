@@ -11,7 +11,7 @@ class Pinguim(Personagem):
         self.x = x
         self.y = y
         self.sala = sala
-        self.intervaloPassosMax = 10
+        self.intervaloPassosMax = 1
         self.demanda = (0, 0)
 
 
@@ -26,9 +26,9 @@ class Pinguim(Personagem):
         self.demanda = self.pos[random.choice(self.acoes)]
 
     def tick(self):
+        self.think()
         self.intervaloPassos -= 1
         if self.intervaloPassos <= 0:
-            self.sala.mover(self, self.x, self.y, self.x+self.demanda[0], self.y+self.demanda[1])
-            # self.sala.moverEntidade(self, self.x, self.y, self.x+self.demanda[0], self.y+self.demanda[1])
+            self.sala.moverEntidade(self, self.x+self.demanda[0], self.y+self.demanda[1])
             self.intervaloPassos = self.intervaloPassosMax
         super().tick()
