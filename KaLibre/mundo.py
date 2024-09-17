@@ -15,7 +15,7 @@ class Mundo():
         self.programador = Programador(self.salaAtual.pos[0],self.salaAtual.pos[1], self)
         self.camera.setTarget(self.programador)
         self.salaAtual.adicionarPersonagem(self.programador, self.salaAtual.centro())
-        self.renderDistance = 3
+        self.renderDistance = 1
         self.espalharTesoros()
 
         pygame.mixer.music.load("som/sea curto.mp3")

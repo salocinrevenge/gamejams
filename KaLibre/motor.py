@@ -34,46 +34,56 @@ class Coracao():
         frameTime = 0
         frames = 0
         fps = 0
-
+        debug = False
         while self.running:
-                render = False
-                firstTime = time.time()
-                passedTime = firstTime - lastTime   # tempo que passou desde a ultima vez que o loop foi executado
-                lastTime = firstTime            # atualiza o tempo da ultima vez que o loop foi executado
+            tempo = {"ticks": 0, "render": 0, "sleep": 0}
+            render = False
+            firstTime = time.time()
+            passedTime = firstTime - lastTime   # tempo que passou desde a ultima vez que o loop foi executado
+            lastTime = firstTime            # atualiza o tempo da ultima vez que o loop foi executado
 
-                unprocessedTime += passedTime  # tempo nao processado
-                frameTime += passedTime
+            unprocessedTime += passedTime  # tempo nao processado
+            frameTime += passedTime
 
-                # enquanto nao processou td q deveria (devido a lag em render ou coisas assim)
-                while unprocessedTime >= self.UPDATE_CAP:
-                    # Isso garante que o tempo de atualizacao seja constante
-                    # e nao dependa do tempo de renderizacao. Igualando o 
-                    # jogo para todos os computadores, apenas aumentando o
-                    # fps para computadores mais potentes
-                    unprocessedTime -= self.UPDATE_CAP  # Tempo comido
-                    render = True
+            # enquanto nao processou td q deveria (devido a lag em render ou coisas assim)
+            while unprocessedTime >= self.UPDATE_CAP:
+                # Isso garante que o tempo de atualizacao seja constante
+                # e nao dependa do tempo de renderizacao. Igualando o 
+                # jogo para todos os computadores, apenas aumentando o
+                # fps para computadores mais potentes
+                unprocessedTime -= self.UPDATE_CAP  # Tempo comido
+                render = True
 
-                    try:
-                        self.tick()
-                    except Win as e:
-                        print(e.message)
-                        self.running = False
-                        self.dispose()
-                        return
+                try:
+                    debug_time = time.time()
+                    self.tick()
+                    tempo["ticks"] += (time.time() - debug_time)
+                except Win as e:
+                    print(e.message)
+                    self.running = False
+                    self.dispose()
+                    return
 
-                    if frameTime >= 1.0:
-                            frameTime = 0
-                            fps = frames
-                            frames = 0
-                            # print("FPS: " + str(fps))
+                if frameTime >= 1.0:
+                        frameTime = 0
+                        fps = frames
+                        frames = 0
+                        # print("FPS: " + str(fps))
 
-                # Depois de processar o tempo, renderiza
-                if render:
-                    self.render(self)
-                    frames += 1
-                else:
-                    time.sleep(0.001)
-                await asyncio.sleep(0)
+            # Depois de processar o tempo, renderiza
+            if render:
+                debug_time = time.time()
+                self.render(self)
+                tempo["render"] += (time.time() - debug_time)
+                frames += 1
+            else:
+                debug_time = time.time()
+                time.sleep(0.001)
+                tempo["sleep"] += (time.time() - debug_time)
+            soma = tempo["ticks"] + tempo["render"] + tempo["sleep"]
+            if soma != 0 and debug:
+                print(f"Ticks: {tempo['ticks']/soma*100:.2f}% Render: {tempo['render']/soma*100:.2f}% Sleep: {tempo['sleep']/soma*100:.2f}%")
+            await asyncio.sleep(0)
                 
         self.dispose()
       
