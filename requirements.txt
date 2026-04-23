@@ -2,3 +2,5 @@ pygame
 numpy
 pymunk
 scipy
+raylib
+pygbag

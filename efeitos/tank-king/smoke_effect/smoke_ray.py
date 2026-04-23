@@ -1,24 +1,14 @@
-import pygame
+import pyray as rl
 import random
-
-pygame.init()
 
 screen_width = 750
 screen_height = 650
-
-screen = pygame.display.set_mode((screen_width, screen_height))
-font = pygame.font.Font(None, 30)
-
-clock = pygame.time.Clock()
 FPS = 60
 
+rl.init_window(screen_width, screen_height, "Smoke Effect")
+rl.set_target_fps(FPS)
 
-def scale(img: pygame.Surface, factor):
-    w, h = img.get_width() * factor, img.get_height() * factor
-    return pygame.transform.scale(img, (int(w), int(h)))
-
-
-IMAGE = pygame.image.load('smoke.png').convert_alpha()
+IMAGE = rl.load_texture("smoke.png")
 
 
 class SmokeParticle:
@@ -26,7 +16,6 @@ class SmokeParticle:
         self.x = x
         self.y = y
         self.scale_k = 0.1
-        self.img = scale(IMAGE, self.scale_k)
         self.alpha = 255
         self.alpha_rate = 3
         self.alive = True
@@ -47,11 +36,18 @@ class SmokeParticle:
         self.alpha_rate -= 0.1
         if self.alpha_rate < 1.5:
             self.alpha_rate = 1.5
-        self.img = scale(IMAGE, self.scale_k)
-        self.img.set_alpha(self.alpha)
 
     def draw(self):
-        screen.blit(self.img, self.img.get_rect(center=(self.x, self.y)))
+        src = rl.Rectangle(0, 0, IMAGE.width, IMAGE.height)
+        dst = rl.Rectangle(
+            self.x - (IMAGE.width * self.scale_k) / 2,
+            self.y - (IMAGE.height * self.scale_k) / 2,
+            IMAGE.width * self.scale_k,
+            IMAGE.height * self.scale_k,
+        )
+        origin = rl.Vector2(0, 0)
+        tint = rl.Color(255, 255, 255, int(self.alpha))
+        rl.draw_texture_pro(IMAGE, src, dst, origin, 0.0, tint)
 
 
 class Smoke:
@@ -80,21 +76,21 @@ smoke = Smoke()
 
 
 def main_game():
-    while True:
-        events = pygame.event.get()
-        for e in events:
-            if e.type == pygame.QUIT:
-                quit()
-            if e.type == pygame.KEYDOWN:
-                if e.key == pygame.K_ESCAPE:
-                    quit()
-        screen.fill((0, 0, 0))
+    while not rl.window_should_close():
         smoke.update()
         smoke.draw()
-        fps_text = font.render(f'FPS = {clock.get_fps():.2f}', True, (255, 255, 255))
-        screen.blit(fps_text, (10, 10))
-        pygame.display.update()
-        clock.tick(FPS)
+        rl.begin_drawing()
+        rl.clear_background(rl.BLACK)
+        smoke.draw()
+
+        # Print FPS on the screen
+        fps = rl.get_fps()
+        rl.draw_text(f"FPS: {fps}", 10, 10, 20, rl.WHITE)
+
+        rl.end_drawing()
+
+    rl.unload_texture(IMAGE)
+    rl.close_window()
 
 
 main_game()
