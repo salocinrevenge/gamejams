@@ -3,7 +3,7 @@ import pyray as rl
 from camera import Camera
 from building import Building
 
-from resources import resources_flux
+from infos import resources_flux, buildings
 
 class World:
     def __init__(self, game_manager, camera: Camera, width=100, height=100, escala=64) -> None:
@@ -158,46 +158,75 @@ class World:
         except FileNotFoundError:
             print("No save file found. Starting a new game.")
 
-    def place_building(self, building_selected):
+    def place_building(self, building_selected, free=False):
         if not building_selected:
             return False  # Nenhuma ação de seleção ativa
 
-        # Verifica primeiro
-        if self.map[building_selected.y][building_selected.x].id != "ground":
-            return False  # Posição já ocupada
+        # Verifica colisões (limites do mapa e se está ocupado)
+        if building_selected.x < 0 or building_selected.y < 0 or \
+           building_selected.x + building_selected.width > self.width or \
+           building_selected.y + building_selected.height > self.height:
+            return False
+
         for i in range(building_selected.height):
             for j in range(building_selected.width):
-                if i == 0 and j == 0:
-                    continue  # Pula a posição principal da construção
-
                 if self.map[building_selected.y + i][building_selected.x + j].id != "ground":
                     return False  # Posição já ocupada
 
-        costs = Building.info[building_selected.id].get("cost", {})
-        # Ve se consegue pagar os custos
-        for resource, amount in costs.items():
-            if self.game_manager.hud.resources.get(resource, 0) < amount:
-                return False  # Não tem recursos suficientes
-
+        costs = buildings[building_selected.id].get("cost", {})
+        
+        # Só verifica e cobra custos se não for 'free' (se for move, free será True)
+        if not free:
+            for resource, amount in costs.items():
+                if self.game_manager.hud.resources.get(resource, 0) < amount:
+                    return False  # Não tem recursos suficientes
             
+            for resource, amount in costs.items():
+                self.game_manager.hud.resources[resource] -= amount
+
+        # Coloca no mapa
         self.map[building_selected.y][building_selected.x] = building_selected
         for i in range(building_selected.height):
             for j in range(building_selected.width):
                 if i == 0 and j == 0:
-                    continue  # Pula a posição principal da construção
-                
+                    continue
                 self.map[building_selected.y + i][building_selected.x + j] = Building(
                     building_selected.id, 
                     building_selected.x + j, 
                     building_selected.y + i, 
                     parent=building_selected, 
-                    shift_sprite_sheet=rl.Vector2(
-                        j, 
-                        i
-                    )
+                    shift_sprite_sheet=rl.Vector2(j, i)
                 )
 
-        # Paga os custos
-        for resource, amount in costs.items():
-            self.game_manager.hud.resources[resource] -= amount
         return True
+
+    def get_parent_building(self, x, y):
+        # Retorna a construção principal, mesmo que clique numa parte de uma 3x3
+        building = self.map[y][x]
+        if building.id == "ground":
+            return None
+        if building.parent:
+            return building.parent
+        return building
+
+    def destroy_building(self, x, y):
+        parent = self.get_parent_building(x, y)
+        if not parent:
+            return False
+
+        # Substitui todos os blocos ocupados pela construção de volta por "ground"
+        for i in range(parent.height):
+            for j in range(parent.width):
+                self.map[parent.y + i][parent.x + j] = Building("ground", parent.x + j, parent.y + i)
+        return True
+
+    def pick_up_building(self, x, y):
+        parent = self.get_parent_building(x, y)
+        if not parent:
+            return None
+        
+        # Salva o ID da construção que estava lá para recriar no mouse
+        id_to_move = parent.id
+        self.destroy_building(x, y) # Limpa ela do mapa
+        
+        return Building(id_to_move, 0, 0) # Retorna uma nova pra ficar "na mão" do jogador

@@ -1,7 +1,7 @@
 import pyray as rl
 from building import Building
 from ui_button import UIButton
-from resources import Resources, resources_info
+from infos import resources, buildings
 
 class SidebarMenu:
     def __init__(self, hud):
@@ -71,7 +71,7 @@ class SidebarMenu:
             self.render_info_panel(hovered_item, screen_h)
 
     def render_info_panel(self, hovered_item, screen_h):
-        info = Building.info.get(hovered_item, {})
+        info = buildings.get(hovered_item, {})
         mouse_pos = rl.get_mouse_position()
         
         # Configurações visuais do painel
@@ -119,7 +119,7 @@ class SidebarMenu:
             # Itens da seção
             for res_name, amount in data.items():
                 # Coleta a posição do sprite (mesma lógica da barra de recursos)
-                idx = resources_info.get(res_name, 0)
+                idx = resources.get(res_name, 0)
                 sy = idx if isinstance(idx, int) else idx[0]
                 sx = 0 if isinstance(idx, int) else idx[1]
                 
@@ -154,18 +154,24 @@ class SidebarMenu:
 
             
     def handle_click(self, item):
+        # Limpa seleções passadas ao trocar de menu ou de botão
+        self.hud.selection_action = None
+        self.hud.current_tool = None
+        self.hud.is_moving = False
+
         if item == "Back":
             self.current_menu = "main"
             self.scroll_y = 0
-            self.hud.selection_action = None  # Limpa qualquer seleção de construção ao voltar
         elif item == "Build":
             self.current_menu = "build"
             self.scroll_y = 0
+        elif item == "Move":
+            self.hud.current_tool = "move"
+        elif item == "Destroy":
+            self.hud.current_tool = "destroy"
         elif item == "Research":
             self.current_menu = "research"
             self.scroll_y = 0
         else:
-            print(f"Ação executada: {item}")
             if self.current_menu == "build":
-                # Informa ao HUD principal que uma construção foi selecionada
                 self.hud.selection_action = Building(item, 0, 0)

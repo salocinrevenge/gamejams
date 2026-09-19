@@ -3,7 +3,8 @@ import pyray as rl
 from hud import HUD
 from world import World
 from camera import Camera
-from resources import resources_info
+
+from infos import resources
 
 class GameManager:
 
@@ -24,7 +25,7 @@ class GameManager:
         height = 100
         width = 100
         self.time_to_generate_resources = 5  # Tempo em ticks
-        self.resources_storage = {resource: 0 for resource in resources_info.keys()}
+        self.resources_storage = {resource: 0 for resource in resources.keys()}
         self.camera = Camera(self, pos=rl.Vector2(-(width//2-8), -(height//2-5)), escala=escala)
         self.world = World(self, self.camera, width=width, height=height, escala=escala)
         self.hud = HUD(self, resources=self.resources)

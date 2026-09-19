@@ -1,5 +1,6 @@
 import pyray as rl
-from resources import Resources, resources_info, resources_flux
+
+from infos import resources, resources_flux
 
 class ResourceBar:
     def __init__(self, hud):
@@ -52,7 +53,7 @@ class ResourceBar:
                 rl.draw_rectangle_lines_ex(rect, 1, rl.DARKGRAY)
                 
                 # Pega a posição do ícone na spritesheet com base na classe Resources
-                idx = resources_info.get(name, 0)
+                idx = resources.get(name, 0)
                 sy = idx if isinstance(idx, int) else idx[0]
                 sx = 0 if isinstance(idx, int) else idx[1]
                 
