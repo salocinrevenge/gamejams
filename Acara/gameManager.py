@@ -18,6 +18,8 @@ class GameManager:
         "iron": 1000,
         "silicon": 500,
     }
+
+    technologies = set(["mining", "fotovoltaic"])  # Tecnologias desbloqueadas no início do jogo
     
 
     def __init__(self):
