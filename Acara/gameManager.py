@@ -9,7 +9,7 @@ class GameManager:
         height = 100
         width = 100
         # self.camera = Camera(pos=rl.Vector2((width//2), (height//2)), escala=escala)
-        self.camera = Camera(pos=rl.Vector2(0, 0), escala=escala)
+        self.camera = Camera(pos=rl.Vector2(-(width//2-8), -(height//2-5)), escala=escala)
         self.world = World(self.camera, width=width, height=height, escala=escala)
 
     def tick(self):
@@ -18,3 +18,8 @@ class GameManager:
 
     def render(self):
         self.world.render()
+
+    def on_close(self):
+        self.world.on_close()
+
+    

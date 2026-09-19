@@ -1,6 +1,8 @@
 import pyray as rl
 import math
 
+from building import Building
+
 class Camera():
     def __init__(self, pos:rl.Vector2, escala:float=64.0) -> None:
         self.pos = pos 
@@ -59,7 +61,16 @@ class Camera():
             math.ceil(rect.width*self.escala*self.zoom), 
             math.ceil(rect.height*self.escala*self.zoom),
             rl.BLACK)
-        
+
+    def draw_building(self, img_sprite_sheet, building:Building):
+        rl.draw_texture_pro(
+            img_sprite_sheet,
+            rl.Rectangle(building.x_sprite_sheet*self.escala, building.y_sprite_sheet*self.escala, building.width*self.escala, building.height*self.escala),
+            rl.Rectangle(self.x(building.x)*self.escala*self.zoom, self.y(building.y)*self.escala*self.zoom, building.width*self.escala*self.zoom, building.height*self.escala*self.zoom),
+            rl.Vector2(0, 0),
+            0,
+            rl.WHITE
+        )
 
     def x(self, x):
         return self.pos.x+x

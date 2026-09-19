@@ -31,6 +31,7 @@ async def main():
         draw(game_manager)
         await asyncio.sleep(0)
 
+    game_manager.on_close()
     rl.close_window()
 
 if __name__ == "__main__":
