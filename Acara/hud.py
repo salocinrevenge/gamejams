@@ -1,4 +1,7 @@
 import pyray as rl
+import math
+
+from building import Building
 
 class HUD:
     def __init__(self, game_manager):
@@ -13,6 +16,7 @@ class HUD:
         self.current_menu = "main"  # Pode ser "main", "build" ou "research"
         self.scroll_y = 0.0         # Deslocamento vertical da rolagem
         self.scroll_speed = 30.0
+        self.selection_action = None
 
     def tick(self):
         # Atualiza o HUD
@@ -25,6 +29,26 @@ class HUD:
             wheel = rl.get_mouse_wheel_move()
             if wheel != 0:
                 self.scroll_y += wheel * self.scroll_speed
+
+        if self.selection_action:
+            # Atualiza a posição da ação de seleção revertendo o cálculo da câmera
+            mouse_pos = rl.get_mouse_position()
+            cam = self.game_manager.camera
+            
+            # Calcula a posição exata no mundo
+            exact_x = (mouse_pos.x / (cam.escala * cam.zoom)) - cam.pos.x
+            exact_y = (mouse_pos.y / (cam.escala * cam.zoom)) - cam.pos.y
+            
+            # Arredonda para encaixar em uma grade imaginária de 1x1
+            self.selection_action.x = math.floor(exact_x)
+            self.selection_action.y = math.floor(exact_y)
+
+            if rl.is_mouse_button_pressed(rl.MOUSE_BUTTON_LEFT):
+                # Aqui você pode adicionar a lógica para colocar a construção no mundo
+                print(f"Construção {self.selection_action.id} colocada em ({self.selection_action.x}, {self.selection_action.y})")
+                # Adiciona a construção ao mapa do mundo
+                self.game_manager.world.map[self.selection_action.y][self.selection_action.x] = self.selection_action
+                self.selection_action = None  # Reseta a ação de seleção após colocar a construção
 
     def draw_button(self, text, x, y, width, height):
         """
@@ -57,10 +81,6 @@ class HUD:
         return clicked
 
     def render(self):
-        # Renderiza o HUD Placeholder
-        rl.draw_text(b"HUD Placeholder", 10, 10, 20, rl.DARKGRAY)
-        rl.draw_rectangle_lines(0, 0, rl.get_screen_width(), rl.get_screen_height(), rl.RED)
-        
         # ---- MENU LATERAL ----
         screen_w = rl.get_screen_width()
         screen_h = rl.get_screen_height()
@@ -74,7 +94,7 @@ class HUD:
         if self.current_menu == "main":
             items = ["Build", "Move", "Destroy", "Research"]
         elif self.current_menu == "build":
-            items = ["Back"] + [f"B{i}" for i in range(1, 21)]
+            items = ["Back"] + Building.get_buildings_names()  # Lista de construções disponíveis
         elif self.current_menu == "research":
             items = ["Back", "R1", "R2", "R3"]
 
@@ -105,6 +125,10 @@ class HUD:
 
         rl.end_scissor_mode()
 
+        if self.selection_action:
+            print(f"Desenhando ação de seleção: {self.selection_action.id} na posição do mouse")
+            self.game_manager.camera.draw_building(self.game_manager.world.img_sprite_sheet, self.selection_action, highlight=False)
+
     def handle_click(self, item):
         """
         Gereciona a lógica de quando um botão específico é clicado
@@ -124,3 +148,5 @@ class HUD:
         else:
             # Aqui você adiciona a lógica para Move, Destroy, B1..B20 e R1..R3
             print(f"Ação executada: {item}")
+            if self.current_menu == "build":
+                self.selection_action = Building(item, 0, 0)  # Armazena a construção selecionada para construção

@@ -19,6 +19,11 @@ class Building:
         "sewage": (13 , 0, 1, 1),
     }
 
+    def get_buildings_names():
+        names = list(Building.info.keys())
+        names.remove("ground")  # Remove "ground" da lista, pois não é uma construção que o jogador pode construir
+        return names
+
     def __init__(self, id, x, y):
         self.id = id
         self.x = x

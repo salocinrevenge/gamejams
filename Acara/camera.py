@@ -66,14 +66,17 @@ class Camera():
             math.ceil(rect.height*self.escala*self.zoom),
             rl.BLACK)
 
-    def draw_building(self, img_sprite_sheet, building:Building):
+    def draw_building(self, img_sprite_sheet, building:Building, highlight=False):
+        color = rl.WHITE
+        if highlight:
+            color = rl.YELLOW
         rl.draw_texture_pro(
             img_sprite_sheet,
             rl.Rectangle(building.x_sprite_sheet*self.escala, building.y_sprite_sheet*self.escala, building.width*self.escala, building.height*self.escala),
             rl.Rectangle(self.x(building.x)*self.escala*self.zoom, self.y(building.y)*self.escala*self.zoom, building.width*self.escala*self.zoom, building.height*self.escala*self.zoom),
             rl.Vector2(0, 0),
             0,
-            rl.WHITE
+            color
         )
 
     def x(self, x):
