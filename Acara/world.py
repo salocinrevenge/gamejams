@@ -31,7 +31,6 @@ class World:
             return rl.RED
 
     def render(self):
-        rl.draw_text(b"Hello, World 3!", 10, 10, 20, rl.DARKGRAY)
         for x in range(self.width):
             for y in range(self.height):
                 self.camera.draw_building(self.img_sprite_sheet, self.map[y][x])
