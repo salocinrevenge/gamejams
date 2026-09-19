@@ -14,7 +14,8 @@ class World:
         self.load_game()  # Tenta carregar o jogo salvo, se existir
 
         # carrega a sprite sheet
-        self.img_sprite_sheet = rl.load_texture(b"assets/buildings.png")
+        self.img_sprite_sheet_buildings = rl.load_texture(b"assets/buildings.png")
+        self.img_sprite_sheet_resources = rl.load_texture(b"assets/resources.png")
 
 
     def tick(self):
@@ -33,7 +34,7 @@ class World:
     def render(self):
         for x in range(self.width):
             for y in range(self.height):
-                self.camera.draw_building(self.img_sprite_sheet, self.map[y][x])
+                self.camera.draw_building(self.img_sprite_sheet_buildings, self.map[y][x])
     
 
     def on_close(self):
@@ -65,3 +66,34 @@ class World:
                     self.map[y][x] = Building(id, x, y)
         except FileNotFoundError:
             print("No save file found. Starting a new game.")
+
+    def place_building(self, building_selected):
+        if not building_selected:
+            return False  # Nenhuma ação de seleção ativa
+
+        # Verifica primeiro
+        if self.map[building_selected.y][building_selected.x].id != "ground":
+            return False  # Posição já ocupada
+        for i in range(building_selected.height):
+            for j in range(building_selected.width):
+                if i == 0 and j == 0:
+                    continue  # Pula a posição principal da construção
+
+                if self.map[building_selected.y + i][building_selected.x + j].id != "ground":
+                    return False  # Posição já ocupada
+
+        self.map[building_selected.y][building_selected.x] = building_selected
+        for i in range(building_selected.height):
+            for j in range(building_selected.width):
+                
+                self.map[building_selected.y + i][building_selected.x + j] = Building(
+                    building_selected.id, 
+                    building_selected.x + j, 
+                    building_selected.y + i, 
+                    parent=building_selected, 
+                    shift_sprite_sheet=rl.Vector2(
+                        j, 
+                        i
+                    )
+                )
+        return True

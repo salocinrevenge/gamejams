@@ -25,7 +25,7 @@ class Camera():
 
 
         # apenas se o mouse estiver fora do HUD, para não interferir na rolagem do HUD
-        if rl.get_mouse_x() < rl.get_screen_width() - self.game_manager.hud.menu_width:
+        if rl.get_mouse_x() < rl.get_screen_width() - self.game_manager.hud.sidebar.width:
             # Scroll do mouse para aumentar/diminuir o zoom
             mouse_wheel_move = rl.get_mouse_wheel_move()
             if mouse_wheel_move != 0:
