@@ -18,6 +18,37 @@ class HUD:
         self.scroll_speed = 30.0
         self.selection_action = None
 
+    def place_building(self):
+        if not self.selection_action:
+            return False  # Nenhuma ação de seleção ativa
+
+        # Verifica primeiro
+        if self.game_manager.world.map[self.selection_action.y][self.selection_action.x].id != "ground":
+            return False  # Posição já ocupada
+        for i in range(self.selection_action.height):
+            for j in range(self.selection_action.width):
+                if i == 0 and j == 0:
+                    continue  # Pula a posição principal da construção
+
+                if self.game_manager.world.map[self.selection_action.y + i][self.selection_action.x + j].id != "ground":
+                    return False  # Posição já ocupada
+
+        self.game_manager.world.map[self.selection_action.y][self.selection_action.x] = self.selection_action
+        for i in range(self.selection_action.height):
+            for j in range(self.selection_action.width):
+                
+                self.game_manager.world.map[self.selection_action.y + i][self.selection_action.x + j] = Building(
+                    self.selection_action.id, 
+                    self.selection_action.x + j, 
+                    self.selection_action.y + i, 
+                    parent=self.selection_action, 
+                    shift_sprite_sheet=rl.Vector2(
+                        j, 
+                        i
+                    )
+                )
+        return True
+
     def tick(self):
         # Atualiza o HUD
         
@@ -47,8 +78,8 @@ class HUD:
                 # Aqui você pode adicionar a lógica para colocar a construção no mundo
                 print(f"Construção {self.selection_action.id} colocada em ({self.selection_action.x}, {self.selection_action.y})")
                 # Adiciona a construção ao mapa do mundo
-                self.game_manager.world.map[self.selection_action.y][self.selection_action.x] = self.selection_action
-                self.selection_action = None  # Reseta a ação de seleção após colocar a construção
+                if self.place_building():
+                    self.selection_action = None  # Reseta a ação de seleção após colocar a construção
 
     def draw_button(self, text, x, y, width, height):
         """

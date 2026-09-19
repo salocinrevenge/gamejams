@@ -1,6 +1,4 @@
-
-
-from raylib import rl
+import pyray as rl
 
 
 class Building:
@@ -24,12 +22,14 @@ class Building:
         names.remove("ground")  # Remove "ground" da lista, pois não é uma construção que o jogador pode construir
         return names
 
-    def __init__(self, id, x, y):
+    def __init__(self, id, x, y, parent=None, shift_sprite_sheet=rl.Vector2(0, 0)):
         self.id = id
         self.x = x
         self.y = y
+        self.parent = parent
         
-
         self.y_sprite_sheet, self.x_sprite_sheet, self.width, self.height = self.info[id]
+        self.x_sprite_sheet += shift_sprite_sheet.x
+        self.y_sprite_sheet += shift_sprite_sheet.y
 
     
