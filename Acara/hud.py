@@ -4,31 +4,14 @@ from sidebar_menu import SidebarMenu
 from resource_bar import ResourceBar
 
 class HUD:
-    def __init__(self, game_manager):
+    def __init__(self, game_manager, resources):
         self.game_manager = game_manager
+        self.resources = resources
         self.sidebar = SidebarMenu(self)  # Instancia o menu lateral modularizado
         self.resource_bar = ResourceBar(self)
         self.selection_action = None
 
-        self.resources = {
-            "people": 15,
-            "water ": 100,
-            "food ": 50,
-            "energy ": 0,
-            "ore ": 10,
-            "iron ": 0,
-            "mushroom ": 5,
-            "coal": 0,
-            "sewage": 0,
-            "steel": 0,
-            "gold": 2,
-            "hydrogen": 0,
-            "uranium": 0,
-            "diamond": 1,
-            "nuclear": 0,
-            "chip": 0,
-            "rocket ": 0,
-        }
+        
 
     def tick(self):
         # Atualiza o menu lateral (scroll, etc.)
@@ -50,6 +33,10 @@ class HUD:
                 print(f"Construção {self.selection_action.id} colocada em ({self.selection_action.x}, {self.selection_action.y})")
                 if self.game_manager.world.place_building(self.selection_action):
                     self.selection_action = None
+
+            # Se ESC, tira o selection_action
+            if rl.is_key_pressed(rl.KEY_ESCAPE):
+                self.selection_action = None
 
     def render(self):
         # Renderiza o menu lateral modularizado

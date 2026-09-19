@@ -1,6 +1,7 @@
 import pyray as rl
 from building import Building
 from ui_button import UIButton
+from resources import Resources, resources_info
 
 class SidebarMenu:
     def __init__(self, hud):
@@ -52,20 +53,111 @@ class SidebarMenu:
         rl.begin_scissor_mode(int(menu_x), 0, self.width, screen_h)
         
         current_y = self.btn_padding + self.scroll_y
+        hovered_item = None
         for item in items:
             if current_y + self.btn_height > 0 and current_y < screen_h:
                 btn = UIButton(item, menu_x + self.btn_padding, current_y, self.width - (self.btn_padding * 2), self.btn_height)
-                if btn.update_and_draw():
+                clicked, is_hover = btn.update_and_draw()
+                if is_hover and self.current_menu == "build" and item != "Back":
+                    hovered_item = item
+                if clicked:
                     self.handle_click(item)
-                    
+
             current_y += self.btn_height + self.btn_padding
 
         rl.end_scissor_mode()
 
+        if hovered_item:
+            self.render_info_panel(hovered_item, screen_h)
+
+    def render_info_panel(self, hovered_item, screen_h):
+        info = Building.info.get(hovered_item, {})
+        mouse_pos = rl.get_mouse_position()
+        
+        # Configurações visuais do painel
+        tt_width = 160
+        padding = 10
+        line_height = 24
+        icon_size = 20
+        
+        # Mapeia as seções do dicionário para títulos legíveis
+        sections = [
+            ("Cost", info.get("cost", {})),
+            ("Consumes", info.get("consumes", {})),
+            ("Generates", info.get("produces", {})),
+            ("Storage", info.get("storage", {})) # Adicionado caso a construção guarde algo
+        ]
+        
+        # Calcula a altura necessária para o painel dependendo de quantas seções ele tem
+        total_lines = sum(1 + len(data) for title, data in sections if data)
+        tt_height = (padding * 2) + (total_lines * line_height)
+        
+        # Posiciona à esquerda do mouse (para não sair da tela) e ajusta a altura
+        tt_x = mouse_pos.x - tt_width - 15
+        tt_y = mouse_pos.y
+        if tt_y + tt_height > screen_h:
+            tt_y = screen_h - tt_height - 10
+            
+        # Desenha o fundo e a borda do painel
+        tt_rect = rl.Rectangle(tt_x, tt_y, tt_width, tt_height)
+        rl.draw_rectangle_rec(tt_rect, rl.fade(rl.BLACK, 0.9))
+        rl.draw_rectangle_lines_ex(tt_rect, 1, rl.DARKGRAY)
+        
+        current_y = tt_y + padding
+        sprite_sheet = self.hud.game_manager.world.img_sprite_sheet_resources
+        escala_sprite = self.hud.game_manager.camera.escala
+        
+        # Renderiza as categorias
+        for title, data in sections:
+            if not data:
+                continue
+                
+            # Título da seção (Cost, Consumes...)
+            rl.draw_text(title.encode('utf-8'), int(tt_x + padding), int(current_y), 16, rl.GOLD)
+            current_y += line_height
+            
+            # Itens da seção
+            for res_name, amount in data.items():
+                # Coleta a posição do sprite (mesma lógica da barra de recursos)
+                idx = resources_info.get(res_name, 0)
+                sy = idx if isinstance(idx, int) else idx[0]
+                sx = 0 if isinstance(idx, int) else idx[1]
+                
+                # Desenha o ícone
+                if sprite_sheet.id > 0:
+                    rl.draw_texture_pro(
+                        sprite_sheet,
+                        rl.Rectangle(sx * escala_sprite, sy * escala_sprite, escala_sprite, escala_sprite),
+                        rl.Rectangle(tt_x + padding + 5, current_y, icon_size, icon_size),
+                        rl.Vector2(0, 0),
+                        0,
+                        rl.WHITE
+                    )
+                
+                
+                # Verifica se tem essa quantidade de recurso
+                has_enough = self.hud.resources.get(res_name, 0) >= amount
+                text_color = rl.RAYWHITE if (has_enough or title != "Cost") else rl.RED
+
+                #Desenha a quantidade e nome do recurso
+                # text = f"{amount} {res_name.strip()}"
+                text = f"x{amount}"
+                rl.draw_text(
+                    text.encode('utf-8'), 
+                    int(tt_x + padding + icon_size + 10), 
+                    int(current_y + 2), 
+                    16, 
+                    text_color
+                )
+                
+                current_y += line_height
+
+            
     def handle_click(self, item):
         if item == "Back":
             self.current_menu = "main"
             self.scroll_y = 0
+            self.hud.selection_action = None  # Limpa qualquer seleção de construção ao voltar
         elif item == "Build":
             self.current_menu = "build"
             self.scroll_y = 0

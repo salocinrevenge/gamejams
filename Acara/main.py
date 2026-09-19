@@ -7,6 +7,7 @@ def init_window():
     rl.set_config_flags(rl.FLAG_WINDOW_RESIZABLE)
     rl.init_window(1000, 700, b"A cara")
     rl.set_target_fps(60)
+    rl.set_exit_key(0)
 
 def tick():
     pass

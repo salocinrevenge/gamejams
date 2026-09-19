@@ -37,4 +37,4 @@ class UIButton:
             text_color
         )
         
-        return clicked
+        return clicked, is_hover

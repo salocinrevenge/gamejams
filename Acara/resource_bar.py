@@ -1,10 +1,10 @@
 import pyray as rl
-from resources import Resources
+from resources import Resources, resources_info, resources_flux
 
 class ResourceBar:
     def __init__(self, hud):
         self.hud = hud
-        self.width = 120
+        self.width = 200
         self.item_height = 40
         self.padding = 10
         self.scroll_y = 0.0
@@ -24,7 +24,7 @@ class ResourceBar:
         rl.draw_rectangle(0, 0, self.width, screen_h, rl.fade(rl.BLACK, 0.2))
         
         # Filtra apenas os recursos que possuem quantidade maior que 0
-        owned_resources = {k: v for k, v in self.hud.resources.items() if v > 0}
+        owned_resources = {k: v for k, v in self.hud.resources.items() if (v > 0 or k in resources_flux)}  # Mantém energia e pessoas mesmo que sejam 0
         items = list(owned_resources.items()) # Lista de tuplas: (nome, quantidade)
         
         total_height = len(items) * (self.item_height + self.padding) + self.padding
@@ -52,7 +52,7 @@ class ResourceBar:
                 rl.draw_rectangle_lines_ex(rect, 1, rl.DARKGRAY)
                 
                 # Pega a posição do ícone na spritesheet com base na classe Resources
-                idx = Resources.info.get(name, 0)
+                idx = resources_info.get(name, 0)
                 sy = idx if isinstance(idx, int) else idx[0]
                 sx = 0 if isinstance(idx, int) else idx[1]
                 
@@ -68,7 +68,8 @@ class ResourceBar:
                     )
                 
                 # Desenha o texto (Nome do recurso + Quantidade)
-                text_str = f": {count}"
+                storage = self.hud.game_manager.resources_storage.get(name, 0)
+                text_str = f": {int(count)} / {storage}"
                 rl.draw_text(text_str.encode('utf-8'), int(rect.x + 42), int(rect.y + 10), 16, rl.DARKGRAY)
                 
             current_y += self.item_height + self.padding
