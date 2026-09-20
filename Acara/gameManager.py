@@ -7,6 +7,7 @@ from world import World
 from camera import Camera
 from building import Building
 from infos import resources
+from meteor_event import MeteorEvent
 
 class GameManager:
 
@@ -34,15 +35,18 @@ class GameManager:
         self.camera = Camera(self, pos=rl.Vector2(-(width//2-8), -(height//2-5)), escala=escala)
         self.world = World(self, self.camera, width=width, height=height, escala=escala)
         self.hud = HUD(self, resources=self.resources)
+        self.meteor_event = MeteorEvent(self)
 
     def tick(self):
         self.camera.tick()
         if not self.paused:
             self.world.tick()
+            self.meteor_event.tick()
         self.hud.tick()
 
     def render(self):
         self.world.render()
+        self.meteor_event.render()
         self.hud.render()
 
     def on_close(self):

@@ -1,5 +1,6 @@
 import pyray as rl
 import math
+import random
 
 from building import Building
 
@@ -11,9 +12,20 @@ class Camera():
         self.zoom = 1.0
         self.escala = escala
         self.vel = 0.1
+        self.shake_timer = 0
+        self.shake_intensity = 0.0
+        self.shake_offset = rl.Vector2(0, 0)
         
     def tick(self):
         # Detexta WASD ou setas para mover a camera
+        if self.shake_timer > 0:
+            self.shake_timer -= 1
+            self.shake_offset.x = random.uniform(-self.shake_intensity, self.shake_intensity)
+            self.shake_offset.y = random.uniform(-self.shake_intensity, self.shake_intensity)
+        else:
+            self.shake_offset.x = 0
+            self.shake_offset.y = 0
+
         if rl.is_key_down(rl.KEY_W) or rl.is_key_down(rl.KEY_UP):
             self.pos.y += self.vel/self.zoom
         if rl.is_key_down(rl.KEY_S) or rl.is_key_down(rl.KEY_DOWN):
@@ -82,8 +94,12 @@ class Camera():
             color
         )
 
+    def start_shake(self, duration, intensity):
+        self.shake_timer = duration
+        self.shake_intensity = intensity
+
     def x(self, x):
-        return self.pos.x+x
+        return self.pos.x + x + self.shake_offset.x
 
     def y(self, y):
-        return self.pos.y+y
+        return self.pos.y + y + self.shake_offset.y

@@ -110,6 +110,14 @@ class HUD:
             )
 
         if hasattr(self, 'selected_building') and self.selected_building:
+            # Desenha a área de segurança se for uma Nuke Defensiva
+            if self.selected_building.id == "defensive nuke":
+                # A área é 41x41 com centro em (+1, +1)
+                safe_x = self.selected_building.x + 1 - 20
+                safe_y = self.selected_building.y + 1 - 20
+                safe_rect = rl.Rectangle(safe_x, safe_y, 41, 41)
+                self.game_manager.camera.draw_rect(safe_rect, rl.fade(rl.GREEN, 0.3))
+                
             self.render_building_balloon()
 
     def render_building_balloon(self):
