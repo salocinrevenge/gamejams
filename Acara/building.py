@@ -20,5 +20,8 @@ class Building:
         self.y_sprite_sheet += shift_sprite_sheet.y
         
         self.timer = 0  # Timer individual para a construção
+        self.active_upgrade = None 
+        self.is_working = False
+        self.missing_resources = []
 
     

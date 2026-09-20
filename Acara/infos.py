@@ -2,16 +2,19 @@ buildings = {
         "ground": {"sprite_info": (0, 0, 1, 1), "cost": {}, "technology": []},
         "pump": {"sprite_info": (1, 0, 1, 1), "delay": 5, "cost": {"ore": 100, "iron": 10}, "consumes": {"energy": 1}, "produces": {"water": 1}, "technology": ["mining"]},
         "farm": {"sprite_info": (2, 0, 2, 1), "delay": 20, "cost": {"ore": 300, "iron": 10}, "consumes": {"water": 2, "energy": 1, "people": 2}, "produces": {"food": 10}, "technology": []},
-        "treatment": {"sprite_info": (3, 0, 3, 2), "delay": 5, "cost": {"ore": 600, "iron": 50}, "consumes": {"sewage": 50, "energy": 4, "people": 2}, "produces": {"water": 50}, "technology": []},
+        "treatment": {"sprite_info": (3, 0, 3, 2), "delay": 50, "cost": {"ore": 600, "iron": 50}, "consumes": {"sewage": 200, "energy": 4, "people": 2}, "produces": {"water": 200}, "technology": []},
         "tent": {"sprite_info": (5, 0, 1, 1), "delay": 1, "cost": {"ore": 100, "iron": 10}, "consumes": {"energy": 1, "sewage": -0.05, "food": 0.05, "water": 0.05}, "produces": {"people": 4}, "technology": []},
         "solar": {"sprite_info": (6, 0, 1, 1), "delay": 1, "cost": {"ore": 20, "iron": 20, "silicon": 50}, "produces": {"energy": 20}, "technology": ["fotovoltaic"]},
         "miner": {"sprite_info": (7, 0, 1, 1), "delay": 30, "cost": {"ore": 50, "iron": 50}, "consumes": {"energy": 2, "people": 2}, "produces": {"ore": 50}, "technology": ["mining"]},
         "bin": {"sprite_info": (8, 0, 1, 1), "delay": 1, "cost": {"ore": 50, "iron": 50}, "storage": {"food": 1000}, "technology": []},
         "tank": {"sprite_info": (9, 0, 1, 1), "delay": 1, "cost": {"ore": 50, "iron": 100}, "storage": {"water": 1000}, "technology": []},
-        "resources": {"sprite_info": (10 , 0, 3, 3), "delay": 1, "cost": {"ore": 200, "iron": 100}, "storage": {"ore": 1000, "iron": 1000, "gold": 1000, "silicon": 1000, "uranium": 1000, "diamond": 1000, "chip": 1000, "rocket": 100}, "technology": []},
+        "resources": {"sprite_info": (10 , 0, 3, 3), "delay": 1, "cost": {"ore": 200, "iron": 100}, "storage": {"ore": 1000, "iron": 1000, "gold": 1000, "silicon": 1000, "uranium": 1000, "diamond": 1000, "chip": 1000, "rocket": 10, "coal": 1000, "mushroom": 1000, "steel": 1000}, "technology": []},
         "sewage": {"sprite_info": (13 , 0, 1, 1), "delay": 1, "cost": {"ore": 50, "iron": 50}, "storage": {"sewage": 1000}, "technology": []},
         "laboratory": {"sprite_info": (14 , 0, 1, 1), "delay": 50, "cost": {"ore": 50, "iron": 50, "silicon": 5}, "storage": {"research": 1000}, "consumes": {"energy": 4, "people": 3}, "produces": {"research": 10}, "technology": []},
         "metallurgy": {"sprite_info": (15 , 0, 3, 2), "delay": 10, "cost": {"ore": 600, "iron": 100}, "storage": {"ore": 100, "iron": 100, "gold": 100, "silicon": 100, "uranium": 100}, "consumes": {"energy": 10, "people": 5, "ore": 50}, "produces": {"iron": 10}, "technology": ["metallurgy"]},
+        "kiln": {"sprite_info": (17 , 0, 1, 1), "delay": 10, "cost": {"ore": 400 }, "storage": {"coal": 100}, "consumes": {"mushroom": 20, "people": 1}, "produces": {"coal": 10}, "technology": ["coal"]},
+        "cave": {"sprite_info": (18 , 0, 1, 1), "delay": 20, "cost": {"ore": 300 }, "storage": {"mushroom": 100}, "consumes": {"food": 20, "people": 1}, "produces": {"mushroom": 10}, "technology": ["fungus farming"]},
+        "diamond fab": {"sprite_info": (19 , 0, 1, 1), "delay": 10, "cost": {"ore": 200, "steel": 100, "iron": 100, "gold": 3}, "storage": {"diamond": 100, "coal": 100}, "consumes": {"coal": 50 , "people": 1, "energy": 7}, "produces": {"diamond": 1}, "technology": ["diamond"]},
     }
 
 resources = {
@@ -43,6 +46,7 @@ technologies = {
     "fotovoltaic": {"technology": [], "cost": {"research": 100, "silicon": 10}},
     "metallurgy": {"technology": ["mining"], "cost": {"research": 100, "ore": 100}},
     "siderurgy": {"technology": ["metallurgy"], "cost": {"research": 500, "iron": 100}},
+    "adv. metallurgy": {"technology": ["siderurgy"], "cost": {"research": 500, "steel": 100}},
     "gold refining": {"technology": ["siderurgy"], "cost": {"research": 1000, "ore": 10000}},
     "silicon refining": {"technology": ["siderurgy"], "cost": {"research": 100, "ore": 1000}},
     "uranium refining": {"technology": ["siderurgy"], "cost": {"research": 10000, "ore": 100000}},
@@ -50,9 +54,9 @@ technologies = {
     "coal": {"technology": ["fungus farming"], "cost": {"research": 100, "mushroom": 100}},
     "cloth": {"technology": ["fungus farming"], "cost": {"research": 5000, "mushroom": 100}},
     "apartments": {"technology": ["cloth"], "cost": {"research": 500, "cloth": 100}},
-    "diamond": {"technology": ["coal"], "cost": {"research": 5000, "coal": 10000}},
+    "diamond": {"technology": ["coal", "siderurgy"], "cost": {"research": 5000, "coal": 10000}},
     "drill": {"technology": ["diamond", "metallurgy"], "cost": {"research": 10000, "diamond": 100}},
-    "chips": {"technology": ["silicon refining", "gold refining"], "cost": {"research": 40000, "silicon": 1000, "ore": 1000}},
+    "chips": {"technology": ["silicon refining", "gold refining"], "cost": {"research": 40000, "silicon": 1000, "gold": 1000}},
     "computing": {"technology": ["chips"], "cost": {"research": 5000, "chips": 100}},
     "advanced research": {"technology": ["computing"], "cost": {"research": 100000, "chips": 10000}},
     "nuclear": {"technology": ["uranium refining", "advanced research"], "cost": {"research": 10000, "uranium": 10000}},
@@ -64,4 +68,22 @@ technologies = {
     "satellite": {"technology": ["rocket"], "cost": {"research": 10000, "rocket": 1000}},
     "meteor protection": {"technology": ["satellite", "nukes"], "cost": {"research": 1000000, "rocket": 1000, "nuclear": 1000}},
     "sky hook": {"technology": ["satellite"], "cost": {"research": 100000000, "rocket": 100, "hydrogen": 1000000, "steel": 1000000, "chip": 10000}},
+    "basement": {"technology": ["drill"], "cost": {"research": 1000}},
+    "underground storage": {"technology": ["drill"], "cost": {"research": 1000}},
+}
+
+upgrades_buildings = {
+    "metallurgy": {
+        "gold refining": {"cost": {"iron": 100, "ore": 1000}, "produces": {"gold": 5}, "consumes": {"energy": 5, "people": 2, "ore": 20}},
+        "silicon refining": {"cost": {"iron": 100, "ore": 1000}, "produces": {"silicon": 15}, "consumes": {"energy": 5, "people": 2, "ore": 20}},
+        "uranium refining": {"cost": {"iron": 100, "ore": 1000}, "produces": {"uranium": 1}, "consumes": {"energy": 5, "people": 2, "ore": 20}},
+        "siderurgy": {"cost": {"iron": 100, "ore": 1000}, "produces": {"steel": 10}, "consumes": {"energy": 5, "people": 2, "iron": 10, "coal": 5}},
+        "adv. metallurgy": {"cost": {"iron": 2000, "ore": 3000}, "produces": {"iron": 1000}, "consumes": {"energy": 5, "people": 2, "ore": 5000, "coal": 5}},
+    },
+    "tent": {
+        "basement": {"cost": {"steel": 1000, "ore": 1000, "iron": 1000}, "produces": {"people": 16}, "consumes": {"energy": 0.5, "food": 1, "water": 0.5, "sewage": -0.5}},
+    },
+    "resources": {
+        "underground storage": {"cost": {"steel": 2000, "ore": 3000, "iron": 300}, "storage": {"ore": 10000, "iron": 10000, "gold": 10000, "silicon": 10000, "uranium": 10000, "diamond": 10000, "chip": 10000, "rocket": 100, "coal": 10000, "mushroom": 10000, "steel": 10000}, "consumes": {"energy": 1, "people": 1}},
+    },
 }

@@ -23,9 +23,12 @@ class Camera():
         if rl.is_key_down(rl.KEY_D) or rl.is_key_down(rl.KEY_RIGHT):
             self.pos.x -= self.vel/self.zoom
 
+        # Obtém a largura da barra de recursos à esquerda (padrão 200 no resource_bar.py)
+        left_hud_width = 200 
+        right_hud_width = self.game_manager.hud.sidebar.width
 
         # apenas se o mouse estiver fora do HUD, para não interferir na rolagem do HUD
-        if rl.get_mouse_x() < rl.get_screen_width() - self.game_manager.hud.sidebar.width:
+        if left_hud_width < rl.get_mouse_x() < rl.get_screen_width() - right_hud_width:
             # Scroll do mouse para aumentar/diminuir o zoom
             mouse_wheel_move = rl.get_mouse_wheel_move()
             if mouse_wheel_move != 0:

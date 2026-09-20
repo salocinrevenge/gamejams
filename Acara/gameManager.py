@@ -1,9 +1,11 @@
 import pyray as rl
+import json
+import os
 
 from hud import HUD
 from world import World
 from camera import Camera
-
+from building import Building
 from infos import resources
 
 class GameManager:
@@ -43,5 +45,58 @@ class GameManager:
 
     def on_close(self):
         self.world.on_close()
+
+    def save_game(self):
+        data = {
+            "resources": self.resources,
+            "technologies": list(self.technologies),
+            "camera": {"x": self.camera.pos.x, "y": self.camera.pos.y, "zoom": self.camera.zoom},
+            "buildings": []
+        }
+        for y in range(self.world.height):
+            for x in range(self.world.width):
+                b = self.world.map[y][x]
+                # Só salva a construção 'Pai' para não duplicar os filhos no save
+                if b.id != "ground" and b.parent is None:
+                    data["buildings"].append({
+                        "id": b.id, "x": b.x, "y": b.y, 
+                        "timer": getattr(b, "timer", 0), 
+                        "active_upgrade": getattr(b, "active_upgrade", None)
+                    })
+        with open("savegame.json", "w") as f:
+            json.dump(data, f)
+        print("Jogo Salvo com Sucesso!")
+
+    def load_game(self):
+        if not os.path.exists("savegame.json"):
+            print("Nenhum save encontrado.")
+            return
+            
+        with open("savegame.json", "r") as f:
+            data = json.load(f)
+        
+        self.resources.update(data.get("resources", {}))
+        self.technologies = set(data.get("technologies", []))
+        
+        cam = data.get("camera", {})
+        self.camera.pos.x = cam.get("x", self.camera.pos.x)
+        self.camera.pos.y = cam.get("y", self.camera.pos.y)
+        self.camera.zoom = cam.get("zoom", self.camera.zoom)
+        
+        # Limpa todo o mapa
+        for y in range(self.world.height):
+            for x in range(self.world.width):
+                self.world.map[y][x] = Building("ground", x, y)
+                
+        # Reconstrói e carrega as máquinas
+        for b_data in data.get("buildings", []):
+            new_b = Building(b_data["id"], b_data["x"], b_data["y"])
+            new_b.timer = b_data.get("timer", 0)
+            new_b.active_upgrade = b_data.get("active_upgrade", None)
+            self.world.place_building(new_b, free=True)
+            
+        print("Jogo Carregado com Sucesso!")
+
+    
 
     

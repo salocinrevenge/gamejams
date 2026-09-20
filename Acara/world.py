@@ -2,8 +2,7 @@ import pyray as rl
 
 from camera import Camera
 from building import Building
-
-from infos import resources_flux, buildings
+from infos import resources_flux, buildings, upgrades_buildings, resources
 
 class World:
     def __init__(self, game_manager, camera: Camera, width=100, height=100, escala=64) -> None:
@@ -19,7 +18,6 @@ class World:
         self.resources_timer2 = 0
 
         self.map = [[ Building("ground", x, y) for x in range(width)] for y in range(height)]
-        self.load_game()  # Tenta carregar o jogo salvo, se existir
 
         # carrega a sprite sheet
         self.img_sprite_sheet_buildings = rl.load_texture(b"assets/buildings.png")
@@ -31,85 +29,111 @@ class World:
         if self.resources_timer >= self.time_to_generate_resources:
             self.resources_timer = 0
             self.resources_timer2 += 1
-            generating={"energy": 0, "people": 0}
-            generated={"energy": self.resources_storage.get("energy", 0), "people": self.resources_storage.get("people", 0)}
-            consumed={"energy": 0, "people": 0}
+            
+            # Inicializa os fluxos deste ciclo
+            generating = {"energy": 0, "people": 0}
+            consumed = {"energy": 0, "people": 0}
+            
+            # Guarda a capacidade de fluxo do ciclo anterior para checar se as máquinas podem ligar
+            generated = {"energy": self.resources_storage.get("energy", 0), "people": self.resources_storage.get("people", 0)}
 
-            # Reset storage counts
-            last_storage = self.resources_storage.copy()
-            for resource in self.resources_storage:
-                self.resources_storage[resource] = 0
+            # Zera completamente todo o armazenamento (vamos recalcular do zero lendo as construções)
+            for res in self.resources_storage:
+                self.resources_storage[res] = 0
 
-            # Gera novos recursos
+            # 1. PRIMEIRO PASSO: Calcula a capacidade MÁXIMA de armazenamento físico do mapa
             for x in range(self.width):
                 for y in range(self.height):
-                    if self.map[y][x].parent is not None:
-                        continue  # Pula se for uma construção filha (não principal)
-
+                    if self.map[y][x].parent is not None or self.map[y][x].id == "ground":
+                        continue
+                    
                     id = self.map[y][x].id
+                    b_storage = dict(self.map[y][x].info[id].get("storage", {}))
+                    
+                    if self.map[y][x].active_upgrade:
+                        upg_data = upgrades_buildings.get(id, {}).get(self.map[y][x].active_upgrade, {})
+                        for k, v in upg_data.get("storage", {}).items():
+                            b_storage[k] = b_storage.get(k, 0) + v
+                            
+                    for res, amount in b_storage.items():
+                        if res not in resources_flux:
+                            self.resources_storage[res] = self.resources_storage.get(res, 0) + amount
 
-                    # Pega o delay e os custos da construção
+            # 2. SEGUNDO PASSO: Produção e consumo das máquinas
+            for x in range(self.width):
+                for y in range(self.height):
+                    if self.map[y][x].parent is not None or self.map[y][x].id == "ground":
+                        continue
+                    
+                    id = self.map[y][x].id
                     delay = self.map[y][x].info[id].get("delay", 1)
-                    consumes = self.map[y][x].info[id].get("consumes", {})
+                    
+                    b_consumes = dict(self.map[y][x].info[id].get("consumes", {}))
+                    b_produces = dict(self.map[y][x].info[id].get("produces", {}))
+                    
+                    # Combina com Upgrades se houver
+                    if self.map[y][x].active_upgrade:
+                        upg_data = upgrades_buildings.get(id, {}).get(self.map[y][x].active_upgrade, {})
+                        for k, v in upg_data.get("consumes", {}).items(): b_consumes[k] = b_consumes.get(k, 0) + v
+                        for k, v in upg_data.get("produces", {}).items(): b_produces[k] = b_produces.get(k, 0) + v
+
                     has_enough_resources = True
+                    missing = []
 
-                    # 1. Verifica se há recursos suficientes (físicos e fluxo) para operar neste tick
-                    for resource, amount in consumes.items():
-                        if resource in resources_flux:
-                            if consumed.get(resource, 0) + amount > generated.get(resource, 0):
+                    # Verifica se tem recursos de Fluxo e Físicos suficientes para rodar agora
+                    for res, amount in b_consumes.items():
+                        if res in resources_flux:
+                            if consumed.get(res, 0) + amount > generated.get(res, 0):
                                 has_enough_resources = False
-                                break
-                        elif amount < 0:  # Se for um recurso que é gerado (como sewage), precisa ter espaço de armazenamento
-                            if self.resources.get(resource, 0) + amount > last_storage.get(resource, 0):
+                                missing.append(res)
+                        elif amount < 0:
+                            # Se for negativo (ex: consome -0.05 esgoto = gera esgoto), confere se tem espaço físico pra guardar
+                            if self.resources.get(res, 0) + abs(amount) > self.resources_storage.get(res, 0):
                                 has_enough_resources = False
-                                break
-                        elif self.resources.get(resource, 0) < amount:
+                                missing.append(res)
+                        elif self.resources.get(res, 0) < amount:
                             has_enough_resources = False
-                            break
+                            missing.append(res)
 
-                    # Se faltar energia, pessoas ou material físico, o timer congela e não avança
+                    self.map[y][x].is_working = has_enough_resources
+                    self.map[y][x].missing_resources = missing
+
                     if not has_enough_resources:
                         continue 
 
-                    # 2. Consome os recursos de FLUXO (energia/pessoas) para se manter funcionando neste tick
-                    for resource, amount in consumes.items():
-                        if resource in resources_flux:
-                            consumed[resource] += amount
+                    # Consumo e Produção dos FLUXOS (Acontece constantemente)
+                    for res, amount in b_consumes.items():
+                        if res in resources_flux:
+                            consumed[res] = consumed.get(res, 0) + amount
+                            
+                    for res, amount in b_produces.items():
+                        if res in resources_flux:
+                            generating[res] = generating.get(res, 0) + amount
 
-                    # 3. Avança o timer individual da construção
+                    # Consumo e Produção FÍSICA (Acontece quando bate o Timer)
                     self.map[y][x].timer += 1
-
-                    # 4. Se o timer atingiu o delay, consome materiais físicos e produz
                     if self.map[y][x].timer >= delay:
-                        self.map[y][x].timer = 0  # Reseta o timer para o próximo ciclo
+                        self.map[y][x].timer = 0  
                         
-                        # Consome recursos físicos permanentemente
-                        for resource, amount in consumes.items():
-                            if resource not in resources_flux:
-                                self.resources[resource] -= amount
+                        for res, amount in b_consumes.items():
+                            if res not in resources_flux:
+                                if amount > 0:
+                                    self.resources[res] -= amount
+                                else:
+                                    self.resources[res] += abs(amount) # Adiciona ao estoque pq o consumo é negativo
 
-                        # Gera os recursos produzidos
-                        produces = self.map[y][x].info[id].get("produces", {})
-                        for resource, amount in produces.items():
-                            if resource in resources_flux:
-                                generating[resource] = generating.get(resource, 0) + amount
-                                continue
-                            if resource not in self.resources:
-                                self.resources[resource] = 0
-                            if last_storage.get(resource, 0) > self.resources[resource] + amount:
-                                self.resources[resource] += amount
+                        for res, amount in b_produces.items():
+                            if res not in resources_flux:
+                                if res not in self.resources:
+                                    self.resources[res] = 0
+                                if self.resources_storage.get(res, 0) >= self.resources.get(res, 0) + amount:
+                                    self.resources[res] += amount
 
-                    # O cálculo de armazenamento (storage) continua ocorrendo independentemente do timer
-                    storage = self.map[y][x].info[id].get("storage", {})
-                    for resource, amount in storage.items():
-                        if resource not in self.resources_storage:
-                            self.resources_storage[resource] = 0
-                        self.resources_storage[resource] += amount
-
-            for resource in generating:
-                self.resources_storage[resource] = generating[resource]
-            for resource in consumed:
-                self.resources[resource] = consumed[resource]
+            # 3. TERCEIRO PASSO: Consolida os Fluxos na UI
+            for res, amount in consumed.items():
+                self.resources[res] = amount
+            for res, amount in generating.items():
+                self.resources_storage[res] = amount
 
     def get_color(self, id):
         if id == 0:
@@ -130,33 +154,6 @@ class World:
     def on_close(self):
         rl.unload_texture(self.img_sprite_sheet_buildings)
         rl.unload_texture(self.img_sprite_sheet_resources)
-
-    def save_game(self):
-            # Salva o estado do jogo em um arquivo save.txt
-            with open("save.txt", "w") as f:
-                f.write(f"{self.camera.pos.x},{self.camera.pos.y},{self.camera.zoom}\n")
-                for y in range(self.world.height):
-                    for x in range(self.world.width):
-                        building = self.world.map[y][x]
-                        f.write(f"{building.id},{building.x},{building.y}\n")
-    
-    def load_game(self):
-        # Carrega o estado do jogo a partir de um arquivo save.txt
-        try:
-            with open("save.txt", "r") as f:
-                lines = f.readlines()
-                camera_data = lines[0].strip().split(",")
-                self.camera.pos.x = float(camera_data[0])
-                self.camera.pos.y = float(camera_data[1])
-                self.camera.zoom = float(camera_data[2])
-                for line in lines[1:]:
-                    building_data = line.strip().split(",")
-                    id = building_data[0]
-                    x = int(building_data[1])
-                    y = int(building_data[2])
-                    self.map[y][x] = Building(id, x, y)
-        except FileNotFoundError:
-            print("No save file found. Starting a new game.")
 
     def place_building(self, building_selected, free=False):
         if not building_selected:
