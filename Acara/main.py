@@ -25,6 +25,11 @@ async def main():
     game_manager = GameManager()
 
     while not rl.window_should_close():
+        # --- Checagem de Reinício ---
+        if getattr(game_manager, 'should_restart', False):
+            game_manager.on_close()       # Executa limpezas da memória da classe antiga
+            game_manager = GameManager()  # Cria uma instância do jogo 100% nova, zerada
+
         # --- Atualizacao ---
         game_manager.tick()
 

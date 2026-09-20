@@ -20,6 +20,9 @@ class HUD:
         self.show_upgrades = False
 
     def tick(self):
+        if hasattr(self.game_manager, 'endgame') and self.game_manager.endgame.state != "NONE":
+            return
+        
         self.sidebar.update()
         self.resource_bar.update()
         
@@ -61,17 +64,21 @@ class HUD:
             # Não tem construção na mão, mas clicou com a ferramenta de Mover ou Destruir selecionada
             elif rl.is_mouse_button_pressed(rl.MOUSE_BUTTON_LEFT):
                 if 0 <= grid_x < self.game_manager.world.width and 0 <= grid_y < self.game_manager.world.height:
+                    parent = self.game_manager.world.get_parent_building(grid_x, grid_y)
+                    is_nuke = (parent and parent.id == "defensive nuke")
+
                     if self.current_tool == "destroy":
-                        self.game_manager.world.destroy_building(grid_x, grid_y)
+                        if not is_nuke:
+                            self.game_manager.world.destroy_building(grid_x, grid_y)
                     
                     elif self.current_tool == "move":
-                        picked = self.game_manager.world.pick_up_building(grid_x, grid_y)
-                        if picked:
-                            self.selection_action = picked
-                            self.is_moving = True
+                        if not is_nuke:
+                            picked = self.game_manager.world.pick_up_building(grid_x, grid_y)
+                            if picked:
+                                self.selection_action = picked
+                                self.is_moving = True
 
                     elif not self.current_tool:
-                        parent = self.game_manager.world.get_parent_building(grid_x, grid_y)
                         if parent and parent.id != "ground":
                             self.selected_building = parent
                             self.show_upgrades = False
@@ -98,7 +105,7 @@ class HUD:
                     color = rl.RED if self.current_tool == "destroy" else rl.BLUE
                     
                     parent = self.game_manager.world.get_parent_building(math.floor(exact_x), math.floor(exact_y))
-                    if parent:
+                    if parent and parent.id != "defensive nuke":
                         # Pinta a construção inteira alvo
                         cam.draw_rect(rl.Rectangle(parent.x, parent.y, parent.width, parent.height), rl.fade(color, 0.5))
 

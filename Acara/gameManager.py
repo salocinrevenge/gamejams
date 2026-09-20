@@ -8,27 +8,30 @@ from camera import Camera
 from building import Building
 from infos import resources
 from meteor_event import MeteorEvent
+from endgame_manager import EndgameManager
 
 class GameManager:
 
-    resources = {
-        "energy": 0,
-        "people": 4,
-        "water": 100,
-        "food": 50,
-        "sewage": 0,
-        "ore": 2000,
-        "iron": 1000,
-        "silicon": 500,
-    }
+    def start_resources(self):
+        self.resources = {
+            "energy": 0,
+            "people": 4,
+            "water": 100,
+            "food": 50,
+            "sewage": 0,
+            "ore": 2000,
+            "iron": 1000,
+            "silicon": 500,
+        }
 
-    technologies = set(["mining", "fotovoltaic"])  # Tecnologias desbloqueadas no início do jogo
+        self.technologies = set(["mining", "fotovoltaic"])  # Tecnologias desbloqueadas no início do jogo
     
 
     def __init__(self):
         escala = 64
         height = 100
         width = 100
+        self.start_resources()
         self.paused = False  # Estado de pausa do jogo
         self.time_to_generate_resources = 5  # Tempo em ticks
         self.resources_storage = {resource: 0 for resource in resources.keys()}
@@ -36,18 +39,37 @@ class GameManager:
         self.world = World(self, self.camera, width=width, height=height, escala=escala)
         self.hud = HUD(self, resources=self.resources)
         self.meteor_event = MeteorEvent(self)
+        self.endgame = EndgameManager(self)
+
+        self.should_restart = False
+
 
     def tick(self):
+        self.endgame.tick()
         self.camera.tick()
-        if not self.paused:
+        
+        # O mundo e os meteoros rodam no jogo normal
+        if not self.paused and self.endgame.state == "NONE":
             self.world.tick()
             self.meteor_event.tick()
+            
+        # Durante o tempo de espera dos 5 minutos, o mundo deve rodar
+        # para que o consumo/capacidade possa processar as quedas nos recursos
+        elif self.endgame.state == "WAITING" and not self.paused:
+            self.world.tick()
+
+        # O HUD tem um self block interno para quando não for NONE (passo 1)
         self.hud.tick()
 
     def render(self):
         self.world.render()
         self.meteor_event.render()
-        self.hud.render()
+        
+        # Esconde o HUD nos fade outs ou se for tela de vitória
+        if self.endgame.state in ["NONE", "AIMING", "WAITING"]:
+            self.hud.render()
+            
+        self.endgame.render() # UI de finalização deve se sobrepor
 
     def on_close(self):
         self.world.on_close()
