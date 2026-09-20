@@ -1,7 +1,7 @@
 import pyray as rl
 from building import Building
 from ui_button import UIButton
-from infos import resources, buildings
+from infos import resources, buildings, technologies
 
 class SidebarMenu:
     def __init__(self, hud):
@@ -25,10 +25,40 @@ class SidebarMenu:
     def get_items(self):
         if self.current_menu == "main":
             return ["Build", "Move", "Destroy", "Research"]
+            
         elif self.current_menu == "build":
-            return ["Back"] + Building.get_buildings_names()
+            items = ["Back"]
+            # Pega as tecnologias já desbloqueadas pelo jogador
+            unlocked = self.hud.game_manager.technologies
+            
+            # Percorre todas as construções disponíveis no arquivo infos
+            for b_name, b_data in buildings.items():
+                if b_name == "ground":  # Não queremos mostrar o chão na loja
+                    continue
+                
+                # Verifica se o jogador tem todas as tecnologias necessárias para essa construção
+                reqs = b_data.get("technology", [])
+                if all(req in unlocked for req in reqs):
+                    items.append(b_name)
+                    
+            return items
+            
         elif self.current_menu == "research":
-            return ["Back", "R1", "R2", "R3"]
+            items = ["Back"]
+            unlocked = self.hud.game_manager.technologies
+            
+            for tech_name, tech_data in technologies.items():
+                # 1. Se já tem a tecnologia, não mostra
+                if tech_name in unlocked:
+                    continue
+                
+                # 2. Verifica se todas as dependências foram cumpridas
+                reqs = tech_data.get("technology", [])
+                if all(req in unlocked for req in reqs):
+                    items.append(tech_name)
+                    
+            return items
+            
         return []
 
     def render(self):
@@ -58,8 +88,9 @@ class SidebarMenu:
             if current_y + self.btn_height > 0 and current_y < screen_h:
                 btn = UIButton(item, menu_x + self.btn_padding, current_y, self.width - (self.btn_padding * 2), self.btn_height)
                 clicked, is_hover = btn.update_and_draw()
-                if is_hover and self.current_menu == "build" and item != "Back":
-                    hovered_item = item
+                if is_hover and item != "Back":
+                    if self.current_menu in ["build", "research"]:
+                        hovered_item = item
                 if clicked:
                     self.handle_click(item)
 
@@ -71,7 +102,14 @@ class SidebarMenu:
             self.render_info_panel(hovered_item, screen_h)
 
     def render_info_panel(self, hovered_item, screen_h):
-        info = buildings.get(hovered_item, {})
+        # Decide de onde puxar a informação do painel
+        if self.current_menu == "build":
+            info = buildings.get(hovered_item, {})
+        elif self.current_menu == "research":
+            info = technologies.get(hovered_item, {})
+        else:
+            return
+            
         mouse_pos = rl.get_mouse_position()
         
         # Configurações visuais do painel
@@ -175,3 +213,22 @@ class SidebarMenu:
         else:
             if self.current_menu == "build":
                 self.hud.selection_action = Building(item, 0, 0)
+            elif self.current_menu == "research":
+                tech_info = technologies.get(item, {})
+                costs = tech_info.get("cost", {})
+                
+                # Verifica se o jogador tem recursos suficientes
+                can_afford = True
+                for res_name, amount in costs.items():
+                    if self.hud.resources.get(res_name, 0) < amount:
+                        can_afford = False
+                        break
+                
+                if can_afford:
+                    # Desconta os recursos do inventário
+                    for res_name, amount in costs.items():
+                        self.hud.resources[res_name] -= amount
+                    
+                    # Adiciona a tecnologia ao Set do GameManager (desbloqueia)
+                    self.hud.game_manager.technologies.add(item)
+                    print(f"Tecnologia '{item}' pesquisada com sucesso!")

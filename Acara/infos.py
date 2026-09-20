@@ -1,6 +1,3 @@
-
-
-
 buildings = {
         "ground": {"sprite_info": (0, 0, 1, 1), "cost": {}, "technology": []},
         "pump": {"sprite_info": (1, 0, 1, 1), "delay": 5, "cost": {"ore": 100, "iron": 10}, "consumes": {"energy": 1}, "produces": {"water": 1}, "technology": ["mining"]},
@@ -14,7 +11,7 @@ buildings = {
         "resources": {"sprite_info": (10 , 0, 3, 3), "delay": 1, "cost": {"ore": 200, "iron": 100}, "storage": {"ore": 1000, "iron": 1000, "gold": 1000, "silicon": 1000, "uranium": 1000, "diamond": 1000, "chip": 1000, "rocket": 100}, "technology": []},
         "sewage": {"sprite_info": (13 , 0, 1, 1), "delay": 1, "cost": {"ore": 50, "iron": 50}, "storage": {"sewage": 1000}, "technology": []},
         "laboratory": {"sprite_info": (14 , 0, 1, 1), "delay": 50, "cost": {"ore": 50, "iron": 50, "silicon": 5}, "storage": {"research": 1000}, "consumes": {"energy": 4, "people": 3}, "produces": {"research": 10}, "technology": []},
-        "metallurgy": {"sprite_info": (15 , 0, 3, 2), "delay": 10, "cost": {"ore": 600, "iron": 100}, "storage": {"ore": 100, "iron": 100, "gold": 100, "silicon": 100, "uranium": 100}, "consumes": {"energy": 10, "people": 5}, "produces": {"iron": 10}, "technology": ["metallurgy"]},
+        "metallurgy": {"sprite_info": (15 , 0, 3, 2), "delay": 10, "cost": {"ore": 600, "iron": 100}, "storage": {"ore": 100, "iron": 100, "gold": 100, "silicon": 100, "uranium": 100}, "consumes": {"energy": 10, "people": 5, "ore": 50}, "produces": {"iron": 10}, "technology": ["metallurgy"]},
     }
 
 resources = {
