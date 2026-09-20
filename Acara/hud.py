@@ -22,6 +22,16 @@ class HUD:
     def tick(self):
         if hasattr(self.game_manager, 'endgame') and self.game_manager.endgame.state != "NONE":
             return
+
+        # --- Controle do Botão de Velocidade ---
+        speed_rect = rl.Rectangle(rl.get_screen_width() // 2 + 60, 10, 60, 30)
+        if rl.check_collision_point_rec(rl.get_mouse_position(), speed_rect) and rl.is_mouse_button_pressed(rl.MOUSE_BUTTON_LEFT):
+            speeds = [0.5, 1.0, 2.0, 4.0]
+            try:
+                idx = speeds.index(self.game_manager.sim_speed)
+            except ValueError:
+                idx = 1
+            self.game_manager.sim_speed = speeds[(idx + 1) % 4]
         
         self.sidebar.update()
         self.resource_bar.update()
@@ -89,6 +99,23 @@ class HUD:
     def render(self):
         self.sidebar.render()
         self.resource_bar.render()
+
+
+        screen_w = rl.get_screen_width()
+        
+        # --- Desenhar Timer ---
+        seconds = (self.game_manager.run_ticks // 60) % 60
+        minutes = (self.game_manager.run_ticks // 3600)
+        timer_text = f"Time: {minutes:02d}:{seconds:02d}".encode()
+        rl.draw_text(timer_text, screen_w // 2 - 80, 15, 20, rl.DARKGRAY)
+        
+        # --- Desenhar Botão de Velocidade ---
+        speed_rect = rl.Rectangle(screen_w // 2 + 60, 10, 60, 30)
+        rl.draw_rectangle_rec(speed_rect, rl.LIGHTGRAY)
+        rl.draw_rectangle_lines_ex(speed_rect, 1, rl.DARKGRAY)
+        speed_text = f"{self.game_manager.sim_speed}x".encode()
+        rl.draw_text(speed_text, int(speed_rect.x + 10), int(speed_rect.y + 5), 20, rl.BLACK)
+
 
         if self.game_manager.paused:
             rl.draw_text("PAUSED".encode(), rl.get_screen_width() // 2 - 50, rl.get_screen_height() // 2 - 10, 30, rl.YELLOW)

@@ -42,23 +42,39 @@ class GameManager:
         self.endgame = EndgameManager(self)
 
         self.should_restart = False
+        self.sim_speed = 1.0           # Velocidade atual (0.5x, 1x, 2x, 4x)
+        self.ticks_accumulator = 0.0   # Acumula frações de frame para velocidades lentas ou rápidas
+        self.run_ticks = 0             # Tempo total de jogo (em ticks)
+        self.history_timer = 0         # Temporizador para salvar o histórico
+        self.resources_history = []    # Fila com o estado dos recursos no último minuto (60 segundos)
 
 
     def tick(self):
         self.endgame.tick()
         self.camera.tick()
         
-        # O mundo e os meteoros rodam no jogo normal
-        if not self.paused and self.endgame.state == "NONE":
+        def advance_sim():
             self.world.tick()
-            self.meteor_event.tick()
+            if self.endgame.state == "NONE":
+                self.meteor_event.tick()
+                
+            self.run_ticks += 1
             
-        # Durante o tempo de espera dos 5 minutos, o mundo deve rodar
-        # para que o consumo/capacidade possa processar as quedas nos recursos
-        elif self.endgame.state == "WAITING" and not self.paused:
-            self.world.tick()
+            # --- Controle do Histórico a cada segundo (60 frames) ---
+            self.history_timer += 1
+            if self.history_timer >= 60:
+                self.history_timer = 0
+                self.resources_history.append(self.resources.copy())
+                if len(self.resources_history) > 60: # Limita a 60 memórias (último minuto)
+                    self.resources_history.pop(0)
 
-        # O HUD tem um self block interno para quando não for NONE (passo 1)
+        # Se não estiver pausado e nem em cena bloqueada, roda o loop X vezes por frame
+        if not self.paused and self.endgame.state in ["NONE", "WAITING"]:
+            self.ticks_accumulator += self.sim_speed
+            while self.ticks_accumulator >= 1.0:
+                advance_sim()
+                self.ticks_accumulator -= 1.0
+
         self.hud.tick()
 
     def render(self):
