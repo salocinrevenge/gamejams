@@ -11,13 +11,12 @@ class Camera():
         self.target = None
         self.zoom = 1.0
         self.escala = escala
-        self.vel = 0.1
+        self.vel = 0.5
         self.shake_timer = 0
         self.shake_intensity = 0.0
         self.shake_offset = rl.Vector2(0, 0)
         
     def tick(self):
-        # Detexta WASD ou setas para mover a camera
         if self.shake_timer > 0:
             self.shake_timer -= 1
             self.shake_offset.x = random.uniform(-self.shake_intensity, self.shake_intensity)
@@ -26,6 +25,14 @@ class Camera():
             self.shake_offset.x = 0
             self.shake_offset.y = 0
 
+        # --- Movimento da Câmera Arrastando (Botão Direito) ---
+        if rl.is_mouse_button_down(rl.MOUSE_BUTTON_RIGHT):
+            delta = rl.get_mouse_delta()
+            # O sinal é negativo se quiser inverter a direção do arrasto (estilo "puxar o mapa")
+            self.pos.x += delta.x / (self.escala * self.zoom)
+            self.pos.y += delta.y / (self.escala * self.zoom)
+
+        # Detecta WASD ou setas para mover a camera
         if rl.is_key_down(rl.KEY_W) or rl.is_key_down(rl.KEY_UP):
             self.pos.y += self.vel/self.zoom
         if rl.is_key_down(rl.KEY_S) or rl.is_key_down(rl.KEY_DOWN):
