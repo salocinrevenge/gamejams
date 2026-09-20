@@ -82,6 +82,9 @@ class HUD:
     def render(self):
         self.sidebar.render()
         self.resource_bar.render()
+
+        if self.game_manager.paused:
+            rl.draw_text("PAUSED".encode(), rl.get_screen_width() // 2 - 50, rl.get_screen_height() // 2 - 10, 30, rl.YELLOW)
         
         # Feedback visual para as ferramentas
         if not self.selection_action and self.current_tool in ["destroy", "move"]:

@@ -28,6 +28,7 @@ class GameManager:
         escala = 64
         height = 100
         width = 100
+        self.paused = False  # Estado de pausa do jogo
         self.time_to_generate_resources = 5  # Tempo em ticks
         self.resources_storage = {resource: 0 for resource in resources.keys()}
         self.camera = Camera(self, pos=rl.Vector2(-(width//2-8), -(height//2-5)), escala=escala)
@@ -36,7 +37,8 @@ class GameManager:
 
     def tick(self):
         self.camera.tick()
-        self.world.tick()
+        if not self.paused:
+            self.world.tick()
         self.hud.tick()
 
     def render(self):
@@ -97,6 +99,7 @@ class GameManager:
             
         print("Jogo Carregado com Sucesso!")
 
-    
+    def pause_toggle(self):
+        self.paused = not self.paused
 
     

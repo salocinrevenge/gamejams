@@ -24,7 +24,7 @@ class SidebarMenu:
 
     def get_items(self):
         if self.current_menu == "main":
-            return ["Build", "Move", "Destroy", "Research", "Save", "Load"]
+            return ["Build", "Move", "Destroy", "Research", "Save", "Load" ,"Pause"]
             
         elif self.current_menu == "build":
             items = ["Back"]
@@ -214,6 +214,8 @@ class SidebarMenu:
             self.hud.game_manager.save_game()
         elif item == "Load":
             self.hud.game_manager.load_game()
+        elif item == "Pause":
+            self.hud.game_manager.pause_toggle()
         else:
             if self.current_menu == "build":
                 self.hud.selection_action = Building(item, 0, 0)
